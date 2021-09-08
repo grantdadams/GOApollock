@@ -164,6 +164,9 @@ DATA_SECTION
  // Variance for log recr, recruitment indices
   init_number sigmasq_recr
 
+  init_vector lambda(1,4);
+  !! cout << lambda << endl;
+
   int styr_avg_slct
   int endyr_avg_slct
   int i                                          // Index for year
@@ -1213,7 +1216,31 @@ FUNCTION Objective_function
 //   loglik(23)= 0;
  loglik(23) = -.5*square((log_q2_mean-log(0.85))/0.1);
  loglik(24) = 0;
- 
+
+// Apply lambdas which scale the NLL. Only inupts for different
+// surveys so carefully multiply out. Values less <1 downweight
+// data source, =1 has no effect
+
+  // survey 1 Shelikof
+  loglik(4)*=lambda(1); 	// index
+  loglik(5)*=lambda(1);		// age comps	  
+  loglik(6)*=lambda(1);		// len comps
+  loglik(14)*=lambda(1);	// age 1 index
+  loglik(15)*=lambda(1);	// age 2 index
+  // survey 2: NFMS bottom trawl
+  loglik(7)*=lambda(2);		// index
+  loglik(8)*=lambda(2);		// age
+  loglik(9)*=lambda(2);		// length
+  // survey 3 ADF&G
+  loglik(11)*=lambda(3);	// index
+  loglik(12)*=lambda(3);	// age
+  loglik(13)*=lambda(3);	// length
+  // survey 4 and 5 are ages 1 and 2 from Shelikof so included in
+  // survey 1 above
+  // survey 6: summer acoustic
+  loglik(16)*=lambda(4);	// index
+  loglik(17)*=lambda(4);	// age + len comps
+
   objfun = -sum(loglik);
 
 // Variable to do a likelihood profile over
