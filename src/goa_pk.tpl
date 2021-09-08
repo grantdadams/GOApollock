@@ -163,10 +163,9 @@ DATA_SECTION
   init_number   log_mean_recr_proj 
  // Variance for log recr, recruitment indices
   init_number sigmasq_recr
-
+  // These are used to scale the log-likelihoods for the 4 survey components 
   init_vector lambda(1,4);
-  !! cout << lambda << endl;
-
+  
   int styr_avg_slct
   int endyr_avg_slct
   int i                                          // Index for year
@@ -1220,8 +1219,7 @@ FUNCTION Objective_function
 // Apply lambdas which scale the NLL. Only inupts for different
 // surveys so carefully multiply out. Values less <1 downweight
 // data source, =1 has no effect
-
-  // survey 1 Shelikof
+// survey 1 Shelikof
   loglik(4)*=lambda(1); 	// index
   loglik(5)*=lambda(1);		// age comps	  
   loglik(6)*=lambda(1);		// len comps
