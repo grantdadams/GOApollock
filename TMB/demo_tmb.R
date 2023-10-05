@@ -6,6 +6,7 @@ library(compResidual) ## https://github.com/fishfollower/compResidual
 source("functions.R")
 
 ## The dat and rep files from the 2022 final model
+<<<<<<< HEAD
 dat <- readRDS('datfile.RDS')
 replist <- readRDS("repfile.RDS")
 stdadmb <- readRDS("stdfile.RDS")
@@ -23,6 +24,30 @@ obj <- MakeADFun(data=dat, parameters=pars, map=map, random=NULL,
 opt <- with(obj, nlminb(par,fn,gr))
 ##opt <- TMBhelper::fit_tmb(obj, control=list(trace=50))
 rep <- obj$report()
+=======
+dat <- readRDS('TMB/datfile.RDS')
+replist <- readRDS("TMB/repfile.RDS")
+stdadmb <- readRDS("TMB/stdfile.RDS")
+pars <- readRDS('TMB/pars.RDS')
+map <- readRDS('TMB/map.RDS')
+
+# Map with parameters turned on
+map0 <- lapply(map, function(x) as.numeric(x))
+map0 <- lapply(map0, function(x) replace(x, values = 1:length(x)))
+map0$natMscalar <- NA
+map0$sigmaR <- NA
+map0 <- lapply(map0, function(x) as.factor(x))
+map <- map0
+
+## Fit the model and compare to ADMB. Should be identical
+compile("source/goa_pk_tmb.cpp", flag='-w')
+dyn.load('source/goa_pk_tmb.dll')
+obj <- MakeADFun(data=dat, parameters=pars, map=map, random=NULL, silent=FALSE)
+
+## optimize and compare
+opt <- with(obj, nlminb(par,fn,gr))
+opt <- TMBhelper::fit_tmb(obj, control=list(trace=50))
+>>>>>>> origin/tmb_port
 sdrep <- sdreport(obj)
 stdtmb <- with(sdrep, data.frame(par=names(value), est=value, se=sqrt(diag(cov)))) %>%
   group_by(par) %>% mutate(year=1969+1:n()) %>% ungroup
