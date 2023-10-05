@@ -1,9 +1,16 @@
+TMB/src/*.obj
+TMB/src/*.exe
+TMB/src/*.htp
+TMB/src/*.cll
+TMB/src/*.o
+TMB/src/*.dll
 source/*.cpp
 source/*.obj
 source/*.exe
 source/*.htp
 source/*.cll
 source/*.o
+source/*.dll
 .Rproj.user
 .Rhistory
 tests/model_20_8
@@ -21,3 +28,5 @@ markdown/markdown.aux
 markdown/markdown.log
 markdown.log
 markdown.tex
+TMB/R/proj_calcs/proj/spm.exe
+TMB/Selectivity_runs.RData
