@@ -48,7 +48,7 @@ obj_mod0 <- MakeADFun(data=dat, parameters=pars, map=map_mod0, random = NULL, si
 # - Optimize
 lwr <- get_bounds(obj_mod0)$lwr
 upr <- get_bounds(obj_mod0)$upr
-opt_mod0 <- with(obj_mod0, nlminb(par,fn, gr, control = control))
+opt_mod0 <- with(obj_mod0, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
 # fit_mod0 <- TMBhelper::fit_tmb(obj_mod0, upper=upr, lower=lwr, control=control, newtonsteps=1)
 sdrep_mod0 <- sdreport(obj_mod0)
 quantities_mod0 <- obj_mod0$report(obj_mod0$env$last.par.best)
