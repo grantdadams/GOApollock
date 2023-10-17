@@ -1,0 +1,31 @@
+---
+title: "Exploring non-parametric and semi-parametric selectivity using 2d and 3d AR(1)
+  smoothers"
+author: "Grant Adams and Cole Monnahan"
+date: "2023-10-17"
+output: word_document
+---
+
+## Executive Summary
+
+Fishery age composition residuals have suggested misfit for this model for several decades, and has been a point of concern for the PT and SSC. More flexible configurations for fishery selectivity need to be explored.  Facilitation of a new suite of more flexible non-parametric and semi-parametric selectivities in a more rigorous statistical framework requires moving away from ADMB and toward its replacement TMB. We thus ported model 19.1a (the 2022 final model) to TMB and demonstrate nearly identical estimates. We call the TMB version of 19.1a model 23.0 to reflect the change in software framework. We then used model 23.0 to explore a suite of fisheries selectivities which vary in their flexibility and where that flexibility is permitted. We conclude that two non-parametric models would make for an improved fisheries selectivity formulation based on analyzing OSA residuals, AIC model selection, and performance in projected selectivity. The models are 23.0a which uses a 2D AR(1) model, and 23.0b which uses a so-called 3D AR(1) process that parses age, year, and cohort correlations from the data. These models are not expected to greatly impact management advice, but we believe their improved performance and projection capabilities make for a better stock assessment moving forward.
+
+**The authors recommend moving to 23.0 this year, and leave it up to PT discretion whether to adopt 23.0a or 23.0b this year.**
+
+## Proposed models
+
+### Model 23.0: Bridging from ADMB to Template Model Builder
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
