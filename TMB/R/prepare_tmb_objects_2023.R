@@ -1,13 +1,14 @@
 ## LIBRARIES
-library(GOApollock)
-library(TMBhelper)
+# library(GOApollock)
+# library(TMBhelper)
 library(ggplot2)
 library(TMB)
 library(dplyr)
 library(tidyr)
 
 ## READ IN 2022 DATA ----
-dat <- GOApollock::read_pk_dat('TMB/data/pk23_10.txt')
+source("~/GitHub/GOApollock/R/data_fns.R")
+dat <- read_pk_dat('TMB/data/pk23_10.txt')
 source("~/GitHub/GOApollock/R/tmb_fns.R")
 pars <- prepare_par(dat)
 map <- prepare_map(pars)

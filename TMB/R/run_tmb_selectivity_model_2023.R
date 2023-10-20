@@ -30,29 +30,18 @@ map_mod0$log_slp2_fsh_mean <- as.factor(1)
 dat$seltype <- 1
 
 # - Build model 1
-
-# -- Phase
-# phased_pars_mod0 <- TMBphase(
-#   data = dat,
-#   parameters = pars,
-#   map = map_mod0,
-#   random = random,
-#   phases = phases,
-#   model_name = "goa_pk_tmb",
-#   silent = TRUE,
-#   use_gradient = TRUE)
-
 # -- Build model obj
 obj_mod0 <- MakeADFun(data=dat, parameters=pars, map=map_mod0, random = NULL, silent=TRUE)
 
 # - Optimize
 lwr <- get_bounds(obj_mod0)$lwr
 upr <- get_bounds(obj_mod0)$upr
-# opt_mod0 <- with(obj_mod0, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
-fit_mod0 <- TMBhelper::fit_tmb(obj_mod0, control=control, newtonsteps=1)
+opt_mod0 <- with(obj_mod0, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
+# fit_mod0 <- TMBhelper::fit_tmb(obj_mod0, control=control, newtonsteps=1)
 fit_mod0$obj <- obj_mod0
-# fit_mod0$path <- "TMB/src/"
-# fit_mod0$modfile <- "goa_pk_tmb"
+fit_mod0$path <- "TMB/src/"
+fit_mod0$modfile <- "goa_pk_tmb"
+fit_peel
 
 
 ## MODEL 1 ----
@@ -62,6 +51,7 @@ map_mod1 <- map
 
 # -- Random effect pars
 map_mod1$slp1_fsh_dev <- as.factor(1:length(pars$slp1_fsh_dev))
+
 map_mod1$inf1_fsh_dev <- as.factor(1:length(pars$inf1_fsh_dev))
 #map_mod1$slp2_fsh_dev <- as.factor(1:length(pars$slp2_fsh_dev))
 #map_mod1$inf2_fsh_dev <- as.factor(1:length(pars$inf2_fsh_dev))

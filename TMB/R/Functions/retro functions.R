@@ -24,26 +24,28 @@ fit_pk_retros <- function(fit, peels=0:7, getsd=TRUE, ...){
 peel_pars <- function(pars, dat,  peel){
   p <- pars
   stopifnot(peel>=0)
-  endyr <- dat$endyr-peel
-  yrs <- dat$styr:endyr
   nyrs <- length(p$dev_log_recruit)
   ind <- 1:(nyrs-peel)
 
   # Parameter vectors
-  x <- c("dev_log_recruit", "slp1_fsh_dev", "inf1_fsh_dev",
-         "slp2_fsh_dev", "inf2_fsh_dev", "dev_log_F", "log_q1_dev",
+  x <- c("dev_log_recruit", "dev_log_F", "log_q1_dev",
          "log_q2_dev", "log_q3_dev")
   for(i in x) p[[i]] <- p[[i]][ind]
 
-  # Parameter matrices
+  # Fish par (has projection years)
+  # - vectors
+  nyrs_fsh <- length(p$inf1_fsh_dev)
+  ind_fsh <- 1:(nyrs_fsh-peel)
+  x_fsh <- c("slp1_fsh_dev", "inf1_fsh_dev",
+         "slp2_fsh_dev", "inf2_fsh_dev")
+  for(i in x_fsh) p[[i]] <- p[[i]][ind_fsh]
+
+  # - matrices
   if(dat$seltype %in% c(4, 7, 8)){
     x = "selpars_re"
-    for(i in x) p[[i]] <- p[[i]][,ind]
+    for(i in x) p[[i]] <- p[[i]][,ind_fsh]
   }
 
-  # Dim checks (wont work on matrix)
-  if(any(sapply(p, NROW)>length(ind)))
-    stop("Some pars too long in peel ",peel)
   if(peel==0) stopifnot(all.equal(p,pars))
 
   return(p)
