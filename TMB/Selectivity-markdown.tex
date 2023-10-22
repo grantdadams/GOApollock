@@ -479,7 +479,16 @@ Finally, we are interested in the ability of the model to estimate
 selectivity in the current year and near-term projections when no age
 data are available to inform selectivity. In previous models a 5-year
 average was used, but this ignores signals of annual and cohort trends
-in the data.
+in the data. We compare these approaches using retrospective predictions
+of age-specific selectivity and B40. Specifically, consecutive years of
+data were removed, the model was refit, and \(SPR_{40%}
+\) was calculated using 1-year predicted and terminal selectivity.
+Predicted age-specific selectivity and \(SPR_{40%}
+\) from a model fit until year \(y-1\) was compared to terminal
+age-specific selectivity and \(SPR_{40%}
+\) from a model fit until year \(y\) using relative bias and mean
+squared error. Note that Francis weights were not updated for each
+retrospective peel.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}

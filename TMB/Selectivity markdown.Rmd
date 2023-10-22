@@ -4,9 +4,12 @@ title: "Exploring non-parametric and semi-parametric selectivity using 2d and 3d
 author: "Grant Adams and Cole Monnahan"
 date: "2023-10-17"
 output:
-  pdf_document: default
   word_document: default
+  pdf_document: default
+  html_document:
+    df_print: paged
 bibliography: selectivity_references.bib
+always_allow_html: yes
 ---
 
 # Executive Summary
@@ -125,7 +128,11 @@ Below we fit the alternative selectivity options (Table 1) to explore model beha
 
 Second, we use marginal AIC for model selection. Model selection is not routinely used for stock assessment models because of the challenges associated with interpreting selection criteria when fitting to different types of data whose weights are often tuned and the use of penalized maximum likelihood [@Maunder2013;@Punt2014]. An added complication with the hierarchical models investigated here is that the penalty for the number of effective parameters does not include the random effects. Conditional AIC accounts for this but is not available at the moment. So, while the interpretation of differences in AIC is not as straightforward as in other statistical contexts, AIC still provides some important insight into the performance of the different models examined here.
 
-Finally, we are interested in the ability of the model to estimate selectivity in the current year and near-term projections when no age data are available to inform selectivity. In previous models a 5-year average was used, but this ignores signals of annual and cohort trends in the data. We compare these approaches using retrospective predictions of age-specific selectivity and B40. Specifically, consecutive years of data were removed, the model was refit, and $SPR_{40%}$ was calculated using 1-year predicted and terminal selectivity. Predicted age-specific selectivity and $SPR_{40%}$ from a model fit until year $y-1$ was compared to terminal age-specific selectivity and $SPR_{40%}$ from a model fit until year $y$ using relative bias and mean squared error. Note that Francis weights were not updated for each retrospective peel.
+Finally, we are interested in the ability of the model to estimate selectivity in the current year and near-term projections when no age data are available to inform selectivity. In previous models a 5-year average was used, but this ignores signals of annual and cohort trends in the data. We compare these approaches using retrospective projections of age-specific selectivity. Specifically, consecutive years of data were removed, the model was refit, selectivity was projected forward one year. Projected age-specific selectivity in year $y$ from a model fit using data until year $y-1$ was compared to estimated age-specific selectivity in year $y$ from a model fit using data until year $y$ using average relative error and mean squared error:
+
+$$RE_{M(X),age} = \sum_p^{N_p} \left(Sel_{M(X)_{(y-p)},age,y-p+1} - Sel_{M(X)_{(y-p+1)}, age,y-p+1}\right) / Sel_{M(X)_{(y-p+1)}, age,y-p+1} / N_p $$
+$$MSE_{M(X),age} = \sum_p^{N_p} \left(Sel_{M(X)_{(y-p)}, age,y-p+1} - Sel_{M(X)_{(y-p+1)}, age,y-p+1}\right)^2 / N_p $$
+where $RE_{M(X),age}$ and $MSE_{M(X),age}$ are the relative error and mean squared error, respectively, for projected selectivity-at-age from model $M(X)$ (Table 1), $Sel_{M(X)_{(y-p)},age,y-p+1}$ is the one-year projected selectivity from a model fit using data until year $y-p$ ($M(X)_{(y-p)}$), $Sel_{M(X)_{(y-p+1)}, age,y-p+1}$ is the estimated selectivity from model fit using data until year $y-p+1$ ($M(X)_{(y-p+1)}$),and $N_p$ is the number of retrospective peels. Note, that Francis weights were not updated for each retrospective peel. The above metrics were also calculated where projected selectivity $Sel_{M(X)_{(y-p)},age,y-p+1}$ was replaced with the average age-specific selectivity from the last five years, as is currently done for setting reference points.
 
 # Results
 
