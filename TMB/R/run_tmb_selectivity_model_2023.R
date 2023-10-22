@@ -1,7 +1,9 @@
 ## LIBRARIES AND DATA ----
+library(GOApollock)
 source("TMB/R/prepare_tmb_objects_2023.R")
 source("TMB/R/Functions/phaser.R")
 source("TMB/R/Functions/create_bounds.R")
+source("~/GitHub/GOApollock/TMB/R/Functions/retro functions.R")
 
 # map <- lapply(map, function(x) as.factor(as.numeric(x)*NA))
 
@@ -30,18 +32,25 @@ map_mod0$log_slp2_fsh_mean <- as.factor(1)
 dat$seltype <- 1
 
 # - Build model 1
-# -- Build model obj
-obj_mod0 <- MakeADFun(data=dat, parameters=pars, map=map_mod0, random = NULL, silent=TRUE)
+input_mod0 <- list(version="mod0", path="TMB/src/",
+                   modfile="goa_pk_tmb",
+                   dat=dat, pars=pars, map=map_mod0, random=NULL)
+fit_mod0 <- fit_pk(input=input_mod0, getsd=TRUE, control=control, use_bounds = TRUE)
+check <- fit_peel(fit_mod0, 1)
 
-# - Optimize
+
+# -- Build model obj
 lwr <- get_bounds(obj_mod0)$lwr
 upr <- get_bounds(obj_mod0)$upr
-opt_mod0 <- with(obj_mod0, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
-# fit_mod0 <- TMBhelper::fit_tmb(obj_mod0, control=control, newtonsteps=1)
+obj_mod0 <- MakeADFun(data=dat2, parameters=pars2, map=map2, random = NULL, silent=FALSE)
+
+# - Optimize
+# opt_mod0 <- with(obj_mod0, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
+fit_mod0 <- TMBhelper::fit_tmb(obj_mod0, control=control, newtonsteps=1, upp)
 fit_mod0$obj <- obj_mod0
 fit_mod0$path <- "TMB/src/"
 fit_mod0$modfile <- "goa_pk_tmb"
-fit_peel
+fit_peel(fit_mod0, 5)
 
 
 ## MODEL 1 ----
@@ -81,7 +90,7 @@ random <- c("slp1_fsh_dev", "inf1_fsh_dev", "slp2_fsh_dev", "inf2_fsh_dev")
 #   use_gradient = TRUE)
 
 # -- Build model obj
-obj_mod1 <- MakeADFun(data=dat, parameters=pars, map=map_mod1, random=random, silent=TRUE)
+obj_mod1 <- MakeADFun(data=dat, parameters=pars, map=map_mod1, DLL = "goa_pk_tmb", random=random, silent=TRUE)
 
 # - Optimize
 lwr <- get_bounds(obj_mod1)$lwr
@@ -89,6 +98,9 @@ upr <- get_bounds(obj_mod1)$upr
 # opt_mod1 <- with(obj_mod1, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
 fit_mod1 <- TMBhelper::fit_tmb(obj_mod1, control=control, newtonsteps=3)
 fit_mod1$obj <- obj_mod1
+fit_mod1$path <- "TMB/src/"
+fit_mod1$modfile <- "goa_pk_tmb"
+fit_peel(fit_mod1, 5)
 
 
 ## MODEL 2 ----

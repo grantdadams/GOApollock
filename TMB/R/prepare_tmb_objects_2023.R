@@ -1,13 +1,12 @@
 ## LIBRARIES
-# library(GOApollock)
-# library(TMBhelper)
+library(GOApollock)
+library(TMBhelper)
 library(ggplot2)
 library(TMB)
 library(dplyr)
 library(tidyr)
 
 ## READ IN 2022 DATA ----
-source("~/GitHub/GOApollock/R/data_fns.R")
 dat <- read_pk_dat('TMB/data/pk23_10.txt')
 source("~/GitHub/GOApollock/R/tmb_fns.R")
 pars <- prepare_par(dat)
@@ -16,11 +15,6 @@ map <- prepare_map(pars)
 
 ## Selectivity projection years ----
 dat$projfsh_nyrs <- 5
-pars$slp1_fsh_dev <- c(pars$slp1_fsh_dev, rep(0, dat$projfsh_nyrs))
-pars$slp2_fsh_dev <- c(pars$slp2_fsh_dev, rep(0, dat$projfsh_nyrs))
-pars$inf1_fsh_dev <- c(pars$inf1_fsh_dev, rep(0, dat$projfsh_nyrs))
-pars$inf2_fsh_dev <- c(pars$inf2_fsh_dev, rep(0, dat$projfsh_nyrs))
-
 
 ## BUILD FULL MAP ----
 map_full <- lapply(pars, function(x) factor(1:length(x)))
@@ -43,13 +37,13 @@ dat$est_q2_dev <- dat$yrs %in% do.call(seq, as.list(range(dat$srv_acyrs2)))
 dat$est_q3_dev <- dat$yrs %in% do.call(seq, as.list(range(dat$srv_acyrs3)))
 
 
-# - Add fishery selectivity switch
-dat$seltype <- 1
-dat$sel_vartype <- 0
-
 # Create an index for ages and years to feed into TMB, which helps construct the precision matrix
 dat$ay_Index <- as.matrix(expand.grid("age" = seq_len(dat$nages),
                                       "year" = seq_len(dat$nyrs + dat$projfsh_nyrs) ))
+
+# - Add fishery selectivity switch
+dat$seltype <- 1
+dat$sel_vartype <- 0
 
 
 ## ADD "NEW" PARAMETER OBJECTS ----
@@ -58,14 +52,19 @@ dat$ay_Index <- as.matrix(expand.grid("age" = seq_len(dat$nages),
 pars$ln_sel_sd <- log(dat$rwlk_sd[1]) # All the same so reducing to length of 1
 
 # - Non-parametric params
-pars$selpars_re <- array(rep(0, dat$trmage), dim = c(dat$trmage, 1))
-
+pars$selpars_re <- matrix(0, nrow = dat$trmage, ncol = 1)
 pars$mean_sel <- rep(0, dat$nages)
 
 # - AR params
 pars$sel_rho_a <- 0
 pars$sel_rho_y <- 0
 pars$sel_rho_c <- 0
+
+# - Selectivity bits with projection
+pars$slp1_fsh_dev <- c(pars$slp1_fsh_dev, rep(0, dat$projfsh_nyrs))
+pars$slp2_fsh_dev <- c(pars$slp2_fsh_dev, rep(0, dat$projfsh_nyrs))
+pars$inf1_fsh_dev <- c(pars$inf1_fsh_dev, rep(0, dat$projfsh_nyrs))
+pars$inf2_fsh_dev <- c(pars$inf2_fsh_dev, rep(0, dat$projfsh_nyrs))
 
 
 ## ADD NEW MAP OBJECTS ----
