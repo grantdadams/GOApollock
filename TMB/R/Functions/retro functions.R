@@ -43,7 +43,7 @@ peel_pars <- function(pars, dat,  peel){
   # - matrices
   if(dat$seltype %in% c(3, 4, 6, 7, 8)){
     x = "selpars_re"
-    for(i in x) p[[i]] <- p[[i]][,ind_fsh]
+    for(i in x) p[[i]] <- matrix(p[[i]][,ind_fsh], nrow = nrow(p[[i]]))
   }
 
   if(peel==0) stopifnot(all.equal(p,pars))
