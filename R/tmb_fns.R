@@ -51,7 +51,7 @@ get_rep <- function(fits) {
 #' @export
 fit_pk <- function(input, getsd=TRUE, newtonsteps=1,
                    control=NULL, do.fit=TRUE,
-                   use_bounds=FALSE){
+                   use_bounds=FALSE, silent = TRUE){
 
   cpp <- paste0(file.path(input$path, input$modfile),'.cpp')
   if(!file.exists(cpp)) stop("file does not exist: ", cpp)
@@ -59,7 +59,7 @@ fit_pk <- function(input, getsd=TRUE, newtonsteps=1,
   dyn.load(dynlib(file.path(input$path, input$modfile)))
   obj <- MakeADFun(data=input$dat, parameters=input$pars,
                    map=input$map, random=input$random,
-                   DLL=input$modfile, silent=TRUE)
+                   DLL=input$modfile, silent=silent)
   if(!do.fit) return(obj)
   if(use_bounds){
     lwr <- get_bounds(obj)$lwr
