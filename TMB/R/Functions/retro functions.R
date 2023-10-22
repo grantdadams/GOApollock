@@ -37,7 +37,7 @@ peel_pars <- function(pars, dat,  peel){
   nyrs_fsh <- length(p$inf1_fsh_dev)
   ind_fsh <- 1:(nyrs_fsh-peel)
   x_fsh <- c("slp1_fsh_dev", "inf1_fsh_dev",
-         "slp2_fsh_dev", "inf2_fsh_dev")
+             "slp2_fsh_dev", "inf2_fsh_dev")
   for(i in x_fsh) p[[i]] <- p[[i]][ind_fsh]
 
   # - matrices
@@ -69,7 +69,10 @@ peel_map <- function(map, pars){
   for(i in names(m)){
     #print(i)
     #if(i=='log_q2_dev') browser()
-    m[[i]] <- m[[i]][1:length(p[[i]])]
+    m[[i]] <- as.factor(
+      as.numeric(m[[i]][1:length(p[[i]])]
+      )
+    )
   }
   return(m)
 }
