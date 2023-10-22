@@ -130,7 +130,7 @@ random <- c("selpars_re")
 input_mod3 <- list(version="mod3", path="TMB/src/",
                    modfile="goa_pk_tmb",
                    dat=dat, pars=pars_mod3, map=map_mod3, random=random)
-fit_mod3 <- fit_pk(input=input_mod3, getsd=TRUE, control=control, use_bounds = TRUE, newtonsteps=2)
+fit_mod3 <- fit_pk(input=input_mod3, getsd=TRUE, control=control, use_bounds = TRUE, newtonsteps=3)
 peels_mod3 <- fit_pk_retros(fit_mod3, peels = 1:5)
 peels_mod3 <- c(list(fit_mod3), peels_mod3)
 
