@@ -64,7 +64,7 @@ random <- c("slp1_fsh_dev", "inf1_fsh_dev", "slp2_fsh_dev", "inf2_fsh_dev")
 input_mod1 <- list(version="mod1", path="TMB/src/",
                    modfile="goa_pk_tmb",
                    dat=dat, pars=pars, map=map_mod1, random=random)
-fit_mod1 <- fit_pk(input=input_mod1, getsd=TRUE, control=control, use_bounds = TRUE, newtonsteps=3, silent = FALSE)
+fit_mod1 <- fit_pk(input=input_mod1, getsd=TRUE, control=control, use_bounds = TRUE, newtonsteps=3, silent = TRUE)
 peels_mod1 <- fit_pk_retros(fit_mod1, peels = 1:5)
 peels_mod1 <- c(list(fit_mod1), peels_mod1)
 

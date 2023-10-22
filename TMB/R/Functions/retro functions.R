@@ -273,7 +273,7 @@ fit_peel <- function(fit, peel, getsd=TRUE, ...){
   map2 <- peel_map(map=fit$obj$env$map, pars2)
   input2 <- list(version=paste0('peel',peel), path=fit$path,
                  modfile=fit$modfile,
-                 dat=dat2, pars=pars2, map=map2, random=fit$obj$env$random)
+                 dat=dat2, pars=pars2, map=map2, random=fit$random)
   message("Starting optimization for peel=",peel)
   fit <- fit_pk(input=input2, getsd=getsd, control=control, ...)
   return(fit)

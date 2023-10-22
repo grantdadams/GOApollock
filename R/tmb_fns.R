@@ -79,7 +79,7 @@ fit_pk <- function(input, getsd=TRUE, newtonsteps=1,
     group_by(name) %>% mutate(year=1969+1:n(), lwr=est-1.96*se,
   upr=est+1.96*se) %>% ungroup %>% mutate(version=input$version)
 
-  fit <- list(version=input$version, path=input$path,
+  fit <- list(version=input$version, path=input$path, random = input$random,
               modfile=input$modfile, rep=rep, opt=opt, sd=std, obj=obj)
   class(fit) <- c('pkfit', 'list')
   saveRDS(fit, file=paste0(input$path,'/fit.RDS'))
