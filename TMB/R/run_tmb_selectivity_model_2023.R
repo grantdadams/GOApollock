@@ -31,26 +31,13 @@ map_mod0$log_slp2_fsh_mean <- as.factor(1)
 # -- Data switch
 dat$seltype <- 1
 
-# - Build model 1
+# - Run model 0
 input_mod0 <- list(version="mod0", path="TMB/src/",
                    modfile="goa_pk_tmb",
                    dat=dat, pars=pars, map=map_mod0, random=NULL)
 fit_mod0 <- fit_pk(input=input_mod0, getsd=TRUE, control=control, use_bounds = TRUE)
-check <- fit_peel(fit_mod0, 1)
-
-
-# -- Build model obj
-lwr <- get_bounds(obj_mod0)$lwr
-upr <- get_bounds(obj_mod0)$upr
-obj_mod0 <- MakeADFun(data=dat2, parameters=pars2, map=map2, random = NULL, silent=FALSE)
-
-# - Optimize
-# opt_mod0 <- with(obj_mod0, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
-fit_mod0 <- TMBhelper::fit_tmb(obj_mod0, control=control, newtonsteps=1, upp)
-fit_mod0$obj <- obj_mod0
-fit_mod0$path <- "TMB/src/"
-fit_mod0$modfile <- "goa_pk_tmb"
-fit_peel(fit_mod0, 5)
+peels_mod0 <- fit_pk_retros(fit_mod0, peels = 1:5)
+peels_mod0 <- c(list(fit_mod0), peels_mod0)
 
 
 ## MODEL 1 ----
@@ -60,16 +47,11 @@ map_mod1 <- map
 
 # -- Random effect pars
 map_mod1$slp1_fsh_dev <- as.factor(1:length(pars$slp1_fsh_dev))
-
 map_mod1$inf1_fsh_dev <- as.factor(1:length(pars$inf1_fsh_dev))
-#map_mod1$slp2_fsh_dev <- as.factor(1:length(pars$slp2_fsh_dev))
-#map_mod1$inf2_fsh_dev <- as.factor(1:length(pars$inf2_fsh_dev))
 
 # -- Fixed effect pars
 map_mod1$ln_sel_sd <- as.factor(1)
-# map_mod1$inf1_fsh_mean <- as.factor(1) # removing mean because no zero constraint
 map_mod1$inf2_fsh_mean <- as.factor(1)
-# map_mod1$log_slp1_fsh_mean <- as.factor(1) # removing mean because no zero constraint
 map_mod1$log_slp2_fsh_mean <- as.factor(1)
 
 # -- Data switch
@@ -78,29 +60,13 @@ dat$seltype <- 1
 # - Build model 1
 random <- c("slp1_fsh_dev", "inf1_fsh_dev", "slp2_fsh_dev", "inf2_fsh_dev")
 
-# -- Phase
-# phased_pars_mod1 <- TMBphase(
-#   data = dat,
-#   parameters = pars,
-#   map = map_mod1,
-#   random = random,
-#   phases = phases,
-#   model_name = "goa_pk_tmb",
-#   silent = TRUE,
-#   use_gradient = TRUE)
-
-# -- Build model obj
-obj_mod1 <- MakeADFun(data=dat, parameters=pars, map=map_mod1, DLL = "goa_pk_tmb", random=random, silent=TRUE)
-
-# - Optimize
-lwr <- get_bounds(obj_mod1)$lwr
-upr <- get_bounds(obj_mod1)$upr
-# opt_mod1 <- with(obj_mod1, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
-fit_mod1 <- TMBhelper::fit_tmb(obj_mod1, control=control, newtonsteps=3)
-fit_mod1$obj <- obj_mod1
-fit_mod1$path <- "TMB/src/"
-fit_mod1$modfile <- "goa_pk_tmb"
-fit_peel(fit_mod1, 5)
+# - Run model 1
+input_mod1 <- list(version="mod1", path="TMB/src/",
+                   modfile="goa_pk_tmb",
+                   dat=dat, pars=pars, map=map_mod1, random=random)
+fit_mod1 <- fit_pk(input=input_mod1, getsd=TRUE, control=control, use_bounds = TRUE)
+peels_mod1 <- fit_pk_retros(fit_mod1, peels = 1:5)
+peels_mod1 <- c(list(fit_mod1), peels_mod1)
 
 
 ## MODEL 2 ----
@@ -126,35 +92,22 @@ dat$seltype <- 2
 # - Build model
 random <- c("selpars_re")
 
-# -- Phase
-# phased_pars_mod2 <- TMBphase(
-#   data = dat,
-#   parameters = pars,
-#   map = map_mod2,
-#   random = random,
-#   phases = phases,
-#   model_name = "goa_pk_tmb",
-#   silent = TRUE,
-#   use_gradient = TRUE)
-
-# -- Build model obj
-obj_mod2 <- MakeADFun(data=dat, parameters=pars, map=map_mod2, random=random, silent=TRUE)
-
-# - Optimize
-lwr <- get_bounds(obj_mod2)$lwr
-upr <- get_bounds(obj_mod2)$upr
-# opt_mod2 <- with(obj_mod2, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
-fit_mod2 <- TMBhelper::fit_tmb(obj_mod2, control=control, newtonsteps=1)
-fit_mod2$obj <- obj_mod2
+# - Run model 1
+input_mod2 <- list(version="mod2", path="TMB/src/",
+                   modfile="goa_pk_tmb",
+                   dat=dat, pars=pars, map=map_mod2, random=random)
+fit_mod2 <- fit_pk(input=input_mod2, getsd=TRUE, control=control, use_bounds = TRUE)
+peels_mod2 <- fit_pk_retros(fit_mod2, peels = 1:5)
+peels_mod2 <- c(list(fit_mod2), peels_mod2)
 
 
 ## MODEL 3 ----
 # - Double logistic with AR1 year random effects on function
 # - Turn on sel sd and slp and inf parameters and ranef vector and rho y
 map_mod3 <- map
+pars_mod3 <- pars
 
 # -- Random effect pars
-pars_mod3 <- pars
 pars_mod3$selpars_re <- matrix(0, nrow = 1, ncol = dat$nyrs + dat$projfsh_nyrs)
 map_mod3$selpars_re <- as.factor(1:length(pars_mod3$selpars_re))
 
@@ -173,26 +126,13 @@ dat$seltype <- 3
 # - Build model
 random <- c("selpars_re")
 
-# -- Phase
-# phased_pars_mod3 <- TMBphase(
-#   data = dat,
-#   parameters = pars_mod3,
-#   map = map_mod3,
-#   random = random,
-#   phases = phases,
-#   model_name = "goa_pk_tmb",
-#   silent = TRUE,
-#   use_gradient = TRUE)
-
-# -- Build model obj
-obj_mod3 <- MakeADFun(data=dat, parameters=pars_mod3, map=map_mod3, random=random, silent=TRUE)
-
-# - Optimize
-lwr <- get_bounds(obj_mod3)$lwr
-upr <- get_bounds(obj_mod3)$upr
-# opt_mod3 <- with(obj_mod3, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
-fit_mod3 <- TMBhelper::fit_tmb(obj_mod3, loopnum=3, control=control, newtonsteps=2)
-fit_mod3$obj <- obj_mod3
+# - Run model 1
+input_mod3 <- list(version="mod3", path="TMB/src/",
+                   modfile="goa_pk_tmb",
+                   dat=dat, pars=pars_mod3, map=map_mod3, random=random)
+fit_mod3 <- fit_pk(input=input_mod3, getsd=TRUE, control=control, use_bounds = TRUE)
+peels_mod3 <- fit_pk_retros(fit_mod3, peels = 1:5)
+peels_mod3 <- c(list(fit_mod3), peels_mod3)
 
 ## MODEL 4 ----
 # - Double logistic with 2D-AR1 age, year random effects on function
@@ -201,7 +141,7 @@ map_mod4 <- map
 pars_mod4 <- pars
 
 # -- Random effect pars
-pars_mod4$selpars_re <- array(0, dim = c(dat$trmage, dat$nyrs + dat$projfsh_nyrs))
+pars_mod4$selpars_re <- matrix(0, nrow = dat$trmage, ncol = dat$nyrs + dat$projfsh_nyrs)
 map_mod4$selpars_re <- as.factor(1:length(pars_mod4$selpars_re))
 
 # -- Fixed effect pars
@@ -220,26 +160,13 @@ dat$seltype <- 4
 # - Build model
 random <- c("selpars_re")
 
-# -- Phase
-# phased_pars_mod4 <- TMBphase(
-#   data = dat,
-#   parameters = pars_mod4,
-#   map = map_mod4,
-#   random = random,
-#   phases = phases,
-#   model_name = "goa_pk_tmb",
-#   silent = TRUE,
-#   use_gradient = TRUE)
-
-# -- Build model obj
-obj_mod4 <- MakeADFun(data=dat, parameters=pars_mod4, map=map_mod4, random=random, silent=TRUE)
-
-# - Optimize
-lwr <- get_bounds(obj_mod4)$lwr
-upr <- get_bounds(obj_mod4)$upr
-# opt_mod4 <- with(obj_mod4, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
-fit_mod4 <- TMBhelper::fit_tmb(obj_mod4, loopnum=3, control=control, newtonsteps=2)
-fit_mod4$obj <- obj_mod4
+# - Run model 1
+input_mod4 <- list(version="mod4", path="TMB/src/",
+                   modfile="goa_pk_tmb",
+                   dat=dat, pars=pars_mod4, map=map_mod4, random=random)
+fit_mod4 <- fit_pk(input=input_mod4, getsd=TRUE, control=control, use_bounds = TRUE)
+peels_mod4 <- fit_pk_retros(fit_mod4, peels = 1:5)
+peels_mod4 <- c(list(fit_mod4), peels_mod4)
 
 
 ## MODEL 5 ----
@@ -255,34 +182,22 @@ dat$seltype <- 5
 
 # - Build model
 
-# -- Phase
-# phased_pars_mod5 <- TMBphase(
-#   data = dat,
-#   parameters = pars,
-#   map = map_mod5,
-#   phases = phases,
-#   model_name = "goa_pk_tmb",
-#   silent = TRUE,
-#   use_gradient = TRUE)
-
-# -- Build model obj
-obj_mod5 <- MakeADFun(data=dat, parameters=pars, map=map_mod5, silent=TRUE)
-
-# - Optimize
-lwr <- get_bounds(obj_mod5)$lwr
-upr <- get_bounds(obj_mod5)$upr
-# opt_mod5 <- with(obj_mod5, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
-fit_mod5 <- TMBhelper::fit_tmb(obj_mod5, loopnum=3, control=control, newtonsteps=2)
-fit_mod5$obj <- obj_mod5
+# - Run model 1
+input_mod5 <- list(version="mod5", path="TMB/src/",
+                   modfile="goa_pk_tmb",
+                   dat=dat, pars=pars, map=map_mod5, random=random)
+fit_mod5 <- fit_pk(input=input_mod5, getsd=TRUE, control=control, use_bounds = TRUE)
+peels_mod5 <- fit_pk_retros(fit_mod5, peels = 1:5)
+peels_mod5 <- c(list(fit_mod5), peels_mod5)
 
 
 ## MODEL 6 ----
 # - Non-parametric 1D-AR1 year random effects
 # - Turn on mean_sel, rho_y, sd, and ranef vector
 map_mod6 <- map
+pars_mod6 <- pars
 
 # -- Random effect pars
-pars_mod6 <- pars
 pars_mod6$selpars_re <- matrix(0, nrow = 1, ncol = dat$nyrs + dat$projfsh_nyrs)
 map_mod6$selpars_re <- as.factor(1:length(pars_mod6$selpars_re))
 
@@ -297,26 +212,13 @@ dat$seltype <- 6
 # - Build model
 random <- c("selpars_re")
 
-# -- Phase
-# phased_pars_mod6 <- TMBphase(
-#   data = dat,
-#   parameters = pars_mod6,
-#   map = map_mod6,
-#   random = random,
-#   phases = phases,
-#   model_name = "goa_pk_tmb",
-#   silent = TRUE,
-#   use_gradient = TRUE)
-
-# -- Build model obj
-obj_mod6 <- MakeADFun(data=dat, parameters=pars_mod6, map=map_mod6, random=random, silent=TRUE)
-
-# - Optimize
-lwr <- get_bounds(obj_mod6)$lwr
-upr <- get_bounds(obj_mod6)$upr
-# opt_mod6 <- with(obj_mod6, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
-fit_mod6 <- TMBhelper::fit_tmb(obj_mod6, loopnum=3, control=control, newtonsteps=3)
-fit_mod6$obj <- obj_mod6
+# - Run model 1
+input_mod6 <- list(version="mod6", path="TMB/src/",
+                   modfile="goa_pk_tmb",
+                   dat=dat, pars=pars_mod6, map=map_mod6, random=random)
+fit_mod6 <- fit_pk(input=input_mod6, getsd=TRUE, control=control, use_bounds = TRUE)
+peels_mod6 <- fit_pk_retros(fit_mod6, peels = 1:5)
+peels_mod6 <- c(list(fit_mod6), peels_mod6)
 
 
 ## MODEL 7 ----
@@ -341,26 +243,13 @@ dat$seltype <- 7
 # - Build model 7
 random <- c("selpars_re")
 
-# -- Phase
-# phased_pars_mod7 <- TMBphase(
-#   data = dat,
-#   parameters = pars_mod7,
-#   map = map_mod7,
-#   random = random,
-#   phases = phases,
-#   model_name = "goa_pk_tmb",
-#   silent = TRUE,
-#   use_gradient = TRUE)
-
-# -- Build model obj
-obj_mod7 <- MakeADFun(data=dat, parameters=pars_mod7, map=map_mod7, random=random, silent=TRUE)
-
-# - Optimize
-lwr <- get_bounds(obj_mod7)$lwr
-upr <- get_bounds(obj_mod7)$upr
-# opt_mod7 <- with(obj_mod7, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
-fit_mod7 <- TMBhelper::fit_tmb(obj_mod7, loopnum=3, control=control, newtonsteps=2)
-fit_mod7$obj <- obj_mod7
+# - Run model 1
+input_mod7 <- list(version="mod7", path="TMB/src/",
+                   modfile="goa_pk_tmb",
+                   dat=dat, pars=pars_mod7, map=map_mod7, random=random)
+fit_mod7 <- fit_pk(input=input_mod7, getsd=TRUE, control=control, use_bounds = TRUE)
+peels_mod7 <- fit_pk_retros(fit_mod7, peels = 1:5)
+peels_mod7 <- c(list(fit_mod7), peels_mod7)
 
 
 ## MODEL 8 ----
@@ -387,26 +276,13 @@ dat$sel_vartype <- 0
 # - Build model
 random <- c("selpars_re")
 
-# -- Phase
-# phased_pars_mod8 <- TMBphase(
-#   data = dat,
-#   parameters = pars_mod8,
-#   map = map_mod8,
-#   random = random,
-#   phases = phases,
-#   model_name = "goa_pk_tmb",
-#   silent = TRUE,
-#   use_gradient = TRUE)
-
-# -- Build model obj
-obj_mod8 <- MakeADFun(data=dat, parameters=pars_mod8, map=map_mod8, random=random, silent=TRUE)
-
-# - Optimize
-lwr <- get_bounds(obj_mod8)$lwr
-upr <- get_bounds(obj_mod8)$upr
-#opt_mod8 <- with(obj_mod8, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
-fit_mod8 <- fit_tmb(obj_mod8, loopnum=3, control=control, newtonsteps=2)
-fit_mod8$obj <- obj_mod8
+# - Run model 1
+input_mod8 <- list(version="mod8", path="TMB/src/",
+                   modfile="goa_pk_tmb",
+                   dat=dat, pars=pars_mod8, map=map_mod8, random=random)
+fit_mod8 <- fit_pk(input=input_mod8, getsd=TRUE, control=control, use_bounds = TRUE)
+peels_mod8 <- fit_pk_retros(fit_mod8, peels = 1:5)
+peels_mod8 <- c(list(fit_mod8), peels_mod8)
 
 
 ## MODEL 9 ----
@@ -433,26 +309,13 @@ dat$sel_vartype <- 1
 # - Build model
 random <- c("selpars_re")
 
-# -- Phase
-# phased_pars_mod9 <- TMBphase(
-#   data = dat,
-#   parameters = pars_mod9,
-#   map = map_mod9,
-#   random = random,
-#   phases = phases,
-#   model_name = "goa_pk_tmb",
-#   silent = TRUE,
-#   use_gradient = TRUE)
-
-# -- Build model obj
-obj_mod9 <- MakeADFun(data=dat, parameters=pars_mod9, map=map_mod9, random=random, silent=TRUE)
-
-# - Optimize
-lwr <- get_bounds(obj_mod9)$lwr
-upr <- get_bounds(obj_mod9)$upr
-# opt_mod9 <- with(obj_mod9, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
-fit_mod9 <- fit_tmb(obj_mod9, loopnum=3, control=control, newtonsteps=0, getSD=FALSE)
-fit_mod9$obj <- obj_mod9
+# - Run model 1
+input_mod9 <- list(version="mod9", path="TMB/src/",
+                   modfile="goa_pk_tmb",
+                   dat=dat, pars=pars_mod9, map=map_mod9, random=random)
+fit_mod9 <- fit_pk(input=input_mod9, getsd=TRUE, control=control, use_bounds = TRUE)
+peels_mod9 <- fit_pk_retros(fit_mod9, peels = 1:5)
+peels_mod9 <- c(list(fit_mod9), peels_mod9)
 
 
 ## MODEL 10 ----
@@ -478,30 +341,17 @@ dat$sel_vartype <- 0
 # - Build model
 random <- c("selpars_re")
 
-# -- Phase
-# phased_pars_mod10 <- TMBphase(
-#   data = dat,
-#   parameters = pars_mod10,
-#   map = map_mod10,
-#   random = random,
-#   phases = phases,
-#   model_name = "goa_pk_tmb",
-#   silent = TRUE,
-#   use_gradient = TRUE)
-
-# -- Build model obj
-obj_mod10 <- MakeADFun(data=dat, parameters=pars_mod10, map=map_mod10, random=random, silent=TRUE)
-
-# - Optimize
-lwr <- get_bounds(obj_mod10)$lwr
-upr <- get_bounds(obj_mod10)$upr
-#opt_mod10 <- with(obj_mod10, nlminb(par,fn, gr, control = control, lower=lwr, upper=upr))
-fit_mod10 <- fit_tmb(obj_mod10, loopnum=3, control=control, newtonsteps=2)
-fit_mod10$obj <- obj_mod10
+# - Run model 1
+input_mod10 <- list(version="mod10", path="TMB/src/",
+                   modfile="goa_pk_tmb",
+                   dat=dat, pars=pars_mod10, map=map_mod10, random=random)
+fit_mod10 <- fit_pk(input=input_mod10, getsd=TRUE, control=control, use_bounds = TRUE)
+peels_mod10 <- fit_pk_retros(fit_mod10, peels = 1:5)
+peels_mod10 <- c(list(fit_mod10), peels_mod10)
 
 
-## Save Image ----
-# save.image(file='TMB/Selectivity_runs.RData')
+## Save ----
+# - Models
 fits <- list(fit_mod0=fit_mod0,
              fit_mod1=fit_mod1,
              fit_mod2=fit_mod2,
@@ -514,4 +364,19 @@ fits <- list(fit_mod0=fit_mod0,
              fit_mod9=fit_mod9,
              fit_mod10=fit_mod10)
 saveRDS(fits, 'TMB/Output/2023_fits.RDS')
+
+
+# - Peels
+peels <- list(peels_mod0=peels_mod0,
+             peels_mod1=peels_mod1,
+             peels_mod2=peels_mod2,
+             peels_mod3=peels_mod3,
+             peels_mod4=peels_mod4,
+             peels_mod5=peels_mod5,
+             peels_mod6=peels_mod6,
+             peels_mod7=peels_mod7,
+             peels_mod8=peels_mod8,
+             peels_mod9=peels_mod9,
+             peels_mod10=peels_mod10)
+saveRDS(peels, 'TMB/Output/2023_peels.RDS')
 

@@ -41,7 +41,7 @@ peel_pars <- function(pars, dat,  peel){
   for(i in x_fsh) p[[i]] <- p[[i]][ind_fsh]
 
   # - matrices
-  if(dat$seltype %in% c(4, 7, 8)){
+  if(dat$seltype %in% c(3, 4, 6, 7, 8)){
     x = "selpars_re"
     for(i in x) p[[i]] <- p[[i]][,ind_fsh]
   }
