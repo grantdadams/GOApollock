@@ -134,6 +134,7 @@ fit_mod3 <- fit_pk(input=input_mod3, getsd=TRUE, control=control, use_bounds = T
 peels_mod3 <- fit_pk_retros(fit_mod3, peels = 1:5)
 peels_mod3 <- c(list(fit_mod3), peels_mod3)
 
+
 ## MODEL 4 ----
 # - Double logistic with 2D-AR1 age, year random effects on function
 # - Turn on sel sd and slp and inf parameters and ranef vector and rho

@@ -40,7 +40,7 @@ template <class Type>
 Type square(Type x){return x*x;};
 template <class Type>
 Type norm2(vector<Type> x){return (x*x).sum();};
-#define see(object) std::cout << #object ":\n" << object << "\n";
+// #define see(object) std::cout << #object ":\n" << object << "\n";
 
 // transformation to ensure correlation parameters are between -1 and 1
 // 2/(1+exp(-2*x)) - 1
