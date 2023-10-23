@@ -130,9 +130,9 @@ Second, we use marginal AIC for model selection. Model selection is not routinel
 
 Finally, we are interested in the ability of the model to estimate selectivity in the current year and near-term projections when no age data are available to inform selectivity. In previous models a 5-year average was used, but this ignores signals of annual and cohort trends in the data. We compare these approaches using retrospective projections of age-specific selectivity. Specifically, consecutive years of data were removed, the model was refit, selectivity was projected forward one year. Projected age-specific selectivity in year $y$ from a model fit using data until year $y-1$ was compared to estimated age-specific selectivity in year $y$ from a model fit using data until year $y$ using average relative error and mean squared error:
 
-$$RE_{M(X),age} = \sum_p^{N_p} \left(Sel_{M(X)_{(y-p)},age,y-p+1} - Sel_{M(X)_{(y-p+1)}, age,y-p+1}\right) / Sel_{M(X)_{(y-p+1)}, age,y-p+1} / N_p $$
-$$MSE_{M(X),age} = \sum_p^{N_p} \left(Sel_{M(X)_{(y-p)}, age,y-p+1} - Sel_{M(X)_{(y-p+1)}, age,y-p+1}\right)^2 / N_p $$
-where $RE_{M(X),age}$ and $MSE_{M(X),age}$ are the relative error and mean squared error, respectively, for projected selectivity-at-age from model $M(X)$ (Table 1), $Sel_{M(X)_{(y-p)},age,y-p+1}$ is the one-year projected selectivity from a model fit using data until year $y-p$ ($M(X)_{(y-p)}$), $Sel_{M(X)_{(y-p+1)}, age,y-p+1}$ is the estimated selectivity from model fit using data until year $y-p+1$ ($M(X)_{(y-p+1)}$),and $N_p$ is the number of retrospective peels. Note, that Francis weights were not updated for each retrospective peel. The above metrics were also calculated where projected selectivity $Sel_{M(X)_{(y-p)},age,y-p+1}$ was replaced with the average age-specific selectivity from the last five years, as is currently done for setting reference points. Mohn's Rho what also calculated for spawning stock biomass across peels for each model.
+$$RE_{M(X),age} = \sum_p^{N_p} \left(Sel_{M(X)_{(y-p)},age,y-p+1} - Sel_{M(X)_{(y)}, age,y-p+1}\right) / Sel_{M(X)_{(y)}, age,y-p+1} / N_p $$
+$$MSE_{M(X),age} = \sum_p^{N_p} \left(Sel_{M(X)_{(y-p)}, age,y-p+1} - Sel_{M(X)_{(y)}, age,y-p+1}\right)^2 / N_p $$
+where $RE_{M(X),age}$ and $MSE_{M(X),age}$ are the relative error and mean squared error, respectively, for projected selectivity-at-age from model $M(X)$ (Table 1), $Sel_{M(X)_{(y-p)},age,y-p+1}$ is the one-year projected selectivity from a model fit using data until year $y-p$ ($M(X)_{(y-p)}$), $Sel_{M(X)_{(y)}, age,y-p+1}$ is the estimated selectivity from model fit using all available data until year $y$ ($M(X)_{(y)}$),and $N_p$ is the number of retrospective peels ($N_p = 7$). Note, that Francis weights were not updated for each retrospective peel. The above metrics were also calculated where projected selectivity $Sel_{M(X)_{(y-p)},age,y-p+1}$ was replaced with the average age-specific selectivity from the last five years, as is currently done for setting reference points. $RE_{M(X),age}$ is referred to as Mohn's Rho, and was also calculated for spawning stock biomass across peels for each model.
 
 # Results
 
@@ -182,7 +182,7 @@ There are thus important differences, especially in younger ages, for the predic
 ![**Figure 9.** Estimated selectivity with uncertainty (+/- 1 SE) for the three models in the two important projection years.](Results/Figure9_selectivity_at_age_projections.png){#fig:figure9}
 
 ## Retrospective performance
-Overall, the 3D-AR1 model had the lowest retrospective bias in spawning stock biomass (Figure 10). When evaluating retrospective bias of age-specific selectivity, it is clear that across models 1, 7, and 8, using the projected selectivity outperforms using the average selectivity from the last five years of the assessment (Table 3). However, age-specific retrospective bias varied across selectivity functions. For example, projected selectivity from Model 8 had lower mean squared error for ages 1-3 and 6-9 than projected selectivity from Model 1, but much higher mean squared error for age-10+.
+Overall, the 3D-AR1 model had the lowest retrospective bias in spawning stock biomass (Figure 10). When evaluating retrospective bias of age-specific selectivity, it is clear that across models 1 and 7, using the projected selectivity outperforms using the average selectivity from the last five years of the assessment (Table 3). However, the result is variable for model 8. However, age-specific retrospective bias varied across selectivity functions. For example, projected selectivity from Model 8 had lower mean squared error for ages 1-4 than projected selectivity from Model 1, but much higher mean squared error for 6+.
 
 ```{r, echo = FALSE, results = 'asis'}
 table3 <- read.csv("Results/Table3_Retrospective_selectivity.csv")
@@ -193,7 +193,9 @@ table3 %>%
   kable_classic(full_width = T, html_font = "Cambria")
 ```
 
-![**Figure 10.** Retrospective spawning stock biomass for the four models with n = 5 peels](Results/Figure10_retrospective_ssb.png){#fig:figure10}
+![**Figure 10.a.** Retrospective spawning stock biomass for model 1 (parDevs) with n = 5 peels](Results/Figure10_Model 1retros.png){#fig:figure10}
+![**Figure 10.b.** Retrospective spawning stock biomass for model 7 (2D AR1) with n = 5 peels](Results/Figure10_Model 7retros.png){#fig:figure10}
+![**Figure 10.c.** Retrospective spawning stock biomass for model 8 (3D AR1) with n = 5 peels](Results/Figure10_Model 8retros.png){#fig:figure10}
 
 # Conclusions
 
