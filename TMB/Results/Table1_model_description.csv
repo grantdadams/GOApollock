@@ -1,0 +1,11 @@
+Name,Type,Fixed (k) and random (p) effects associated with fisheries selectivity
+Constant,Parametric double logistic,"Initial and final inflection ages and slopes (k=4), no random effects (p=0). Used as a baseline without any time-variation."
+ParDevs,Parametric double logistic with random walk on initial slope and inflection point,"Initial and final inflection ages and slopes, plus one process error (k=5), two annual vectors of RE (p=116). This is the same as 19.1a except the process error is estimated"
+Log-AR1-Age,Semiparametric double logistic with random effects by age,"Initial and final inflection ages and slopes, plus process error and AR1 correlation (k=6), one annual vectors of RE (p=10)"
+Log-AR1-Year,Semiparametric double logistic with random effects by year,"Initial and final inflection ages and slopes, plus process error and AR1 correlation (k=6), one annual vector of RE (p=58)"
+Log-2D-AR1,Semiparametric double logistic with random effects by age and year,"Initial and final inflection ages and slopes, plus process error and two AR1 correlations (k=7), matrix of RE (p=580)"
+Age-specific,Nonparametric age-specific fixed effects for selectivity at age. No time-variation,"Mean selectivity at age, (k=10) and no random effects (p=0)"
+AR1-Year,Nonparametric with random effects by year,"Mean selectivity at age, process error and correlation (k=12) and annual random effects (p=58)"
+2D-AR1,Nonparametric with random effects by age and year,"Mean selectivity at age, process error and two correlations (k=13) and matrix of random effects (p=580)"
+3D-AR1cond,"Nonparametric with random effects by age and year, using partial correlations for age, year, and cohort. Conditional variation formulation","Mean selectivity at age, process error and three partial correlations (k=14) and matrix of random effects (p=580)"
+3D-AR1mar,"Nonparametric with random effects by age and year, using partial correlations for age, year, and cohort. Marginal variation formulation.","Mean selectivity at age, process error and three partial correlations (k=14) and matrix of random effects (p=580)"

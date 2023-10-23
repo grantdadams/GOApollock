@@ -40,7 +40,7 @@ template <class Type>
 Type square(Type x){return x*x;};
 template <class Type>
 Type norm2(vector<Type> x){return (x*x).sum();};
-#define see(object) std::cout << #object ":\n" << object << "\n";
+// #define see(object) std::cout << #object ":\n" << object << "\n";
 
 // transformation to ensure correlation parameters are between -1 and 1
 // 2/(1+exp(-2*x)) - 1
@@ -581,6 +581,10 @@ Type objective_function<Type>::operator() ()
   // vector<int> isrv_acyrs4=srv_acyrs4-styr;
   // vector<int> isrv_acyrs5=srv_acyrs5-styr;
   vector<int> isrv_acyrs6=srv_acyrs6-styr;
+  vector<int> isrv_lenyrs1=srv_lenyrs1-styr;
+  vector<int> isrv_lenyrs2=srv_lenyrs2-styr;
+  vector<int> isrv_lenyrs3=srv_lenyrs3-styr;
+  vector<int> isrv_lenyrs6=srv_lenyrs6-styr;
   vector<int> iac_yng_fsh=ac_yng_fsh-1;
   vector<int> iac_old_fsh=ac_old_fsh-1;
   vector<int> iac_yng_srv1=ac_yng_srv1-1;
@@ -599,7 +603,7 @@ Type objective_function<Type>::operator() ()
   // since initN is of length 9 and represents ages 2 to 10 but
   // has limits (0,8) unlike the other vectors
   initN.setZero();
-  initN(0) = exp(mean_log_recruit +  dev_log_recruit(y0) - M(a0)); // age 2
+  initN(0) = exp(mean_log_recruit + dev_log_recruit(y0) - M(a0)); // age 2
   for (j=1;j<=8;j++) {
     // j is a different age between initN and M
     initN(j) = initN(j-1)*exp(-M(j+1));
@@ -1002,6 +1006,16 @@ Type objective_function<Type>::operator() ()
   }
   loglik(9) = 0;
 
+     // - Length composition
+   loglik(8)=0;
+   for (i=0;i<nyrslen_srv2;i++) {
+     llsrvlenp2(i) = 0;
+     for (j=0;j<nbins2;j++) {
+       llsrvlenp2(i) += multNlen_srv2(i)*(srvlenp2(i,j)+o)*log((Esrvlenp2(isrv_lenyrs2(i),j)+o)/(srvlenp2(i,j)+o));
+     }
+     loglik(8) += llsrvlenp2(i);
+   }
+
   // Survey 3 (ADFG coastal survey) likelihoods
   // - Total biomass
   loglik(10)=0;
@@ -1059,6 +1073,16 @@ Type objective_function<Type>::operator() ()
     }
     loglik(16) +=llsrvp6(i);
   }
+
+  // length composition
+  for (i=0;i<nyrslen_srv6;i++) {
+     llsrvlenp6(i) = 0;
+     for (j=0;j<nbins2;j++) {
+       llsrvlenp6(i) += multNlen_srv6(i)*(srvlenp6(i,j)+o)*log((Esrvlenp6(isrv_lenyrs6(i),j)+o)/(srvlenp6(i,j)+o));
+     }
+     loglik(16) += llsrvlenp6(i);
+   }
+
 
   // Constraints on recruitment. Assumed sigmaR=1.3 for all devs
   loglik(17) += -0.5*norm2(dev_log_recruit)/square(sigmaR);
@@ -1126,11 +1150,11 @@ Type objective_function<Type>::operator() ()
   loglik(23) += dnorm(inf2_srv6, Type(10.0),Type(3.0), true);
   objfun = -sum(loglik);
 
-
-
   // -----------------------------------------------
   // REPORT
   // -----------------------------------------------
+  REPORT(styr);
+  REPORT(endyr);
   REPORT(objfun);
   REPORT(loglik);
   REPORT(recruit);
