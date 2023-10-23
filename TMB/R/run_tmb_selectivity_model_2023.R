@@ -1,14 +1,12 @@
+# Fits the adapts GOA pollock stock assessment in TMB with semi and non-parametric selectivity functions
+# Also runs the models retrospectives
+
 ## LIBRARIES AND DATA ----
 library(GOApollock)
 source("TMB/R/prepare_tmb_objects_2023.R")
 source("TMB/R/Functions/phaser.R")
 source("TMB/R/Functions/create_bounds.R")
 source("~/GitHub/GOApollock/TMB/R/Functions/retro functions.R")
-
-# map <- lapply(map, function(x) as.factor(as.numeric(x)*NA))
-
-# trace = 1, print fixed effects vector?
-# map off rho?
 
 
 ## COMPILE AND BUILD TMB ----
@@ -362,7 +360,7 @@ fits <- list(fit_mod0=fit_mod0,
              fit_mod6=fit_mod6,
              fit_mod7=fit_mod7,
              fit_mod8=fit_mod8,
-             fit_mod9=fit_mod9,
+             # fit_mod9=fit_mod9,
              fit_mod10=fit_mod10)
 saveRDS(fits, 'TMB/Output/2023_fits.RDS')
 
@@ -377,7 +375,7 @@ peels <- list(peels_mod0=peels_mod0,
              peels_mod6=peels_mod6,
              peels_mod7=peels_mod7,
              peels_mod8=peels_mod8,
-             peels_mod9=peels_mod9,
+             # peels_mod9=peels_mod9,
              peels_mod10=peels_mod10)
 saveRDS(peels, 'TMB/Output/2023_peels.RDS')
 
