@@ -16,9 +16,9 @@ model_names <- c(
   'Mod 5: Age-specific',
   'Mod 6: AR1-Yr',
   'Mod 7: 2D-AR1',
-  "Mod 8: 3D-AR1cond",
+  "Mod 8: 3D-AR1cond"
   # , 'Mod 9: 3D-AR1mar'
-  "Mod 10: 2D-AR1condCoh"
+  # "Mod 10: 2D-AR1condCoh"
 )
 
 
@@ -51,8 +51,8 @@ for(i in 1:length(peels)){ # - Loop models
     mse_mat_avg5[i,1:dat$nages] <- mse_mat_avg5[i,1:dat$nages] + (slctfsh_base - slctfsh_avg5)^2/(length(peels[[i]])-1)
 
     # - Across all ages
-    mse_mat_proj[i,(dat$nages + 1)] <- mse_mat_proj[i,(dat$nages + 1)] + mean(mse_mat_proj[i,1:dat$nages])/(length(peels[[i]])-1)
-    mse_mat_avg5[i,(dat$nages + 1)] <- mse_mat_avg5[i,(dat$nages + 1)] + mean(mse_mat_avg5[i,1:dat$nages])/(length(peels[[i]])-1)
+    mse_mat_proj[i,(dat$nages + 1)] <- mse_mat_proj[i,(dat$nages + 1)] + mean(mse_mat_proj[i,2:dat$nages])/(length(peels[[i]])-1)
+    mse_mat_avg5[i,(dat$nages + 1)] <- mse_mat_avg5[i,(dat$nages + 1)] + mean(mse_mat_avg5[i,2:dat$nages])/(length(peels[[i]])-1)
 
     # -- Mean relative error
     # - Age specific
@@ -60,8 +60,8 @@ for(i in 1:length(peels)){ # - Loop models
     re_mat_avg5[i,1:dat$nages] <- re_mat_avg5[i,1:dat$nages] + (slctfsh_avg5 - slctfsh_base)/slctfsh_base/(length(peels[[i]])-1)
 
     # - Across all ages
-    re_mat_proj[i,(dat$nages + 1)] <- re_mat_proj[i,(dat$nages + 1)] + mean(re_mat_proj[i,1:dat$nages])/(length(peels[[i]])-1)
-    re_mat_avg5[i,(dat$nages + 1)] <- re_mat_avg5[i,(dat$nages + 1)] + mean(re_mat_avg5[i,1:dat$nages])/(length(peels[[i]])-1)
+    re_mat_proj[i,(dat$nages + 1)] <- re_mat_proj[i,(dat$nages + 1)] + mean(re_mat_proj[i,2:dat$nages])/(length(peels[[i]])-1)
+    re_mat_avg5[i,(dat$nages + 1)] <- re_mat_avg5[i,(dat$nages + 1)] + mean(re_mat_avg5[i,2:dat$nages])/(length(peels[[i]])-1)
 
     # - Terminal SSB
     re_mat_ssb[i] <- re_mat_ssb[i] + (ssb_peel - ssb_base)/ssb_base/(length(peels[[i]])-1)
@@ -176,7 +176,7 @@ for(i in c(1,2,8,9)){
   g1 <- g1 +
     geom_point(data=tmp2, aes(y=SSB, color=factor(peel)), size=2) +
     theme(legend.position='none') +
-    annotate('label', x=2010,y=.05, label=paste0(tmp2$model[1], " (Mohn's Rho =", 100 * round(tmp2$Mohns[1],3), ")")) +
+    annotate('label', x=2008,y=.05, label=paste0(tmp2$model[1], " (Mohn's Rho =", 100 * round(tmp2$Mohns[1],3), ")")) +
     labs(x=NULL, y='Spawning Biomass (million t)')
 
 
@@ -190,6 +190,6 @@ for(i in c(1,2,8,9)){
 
   g <- cowplot::plot_grid(g1,g2, nrow=2)
 
-  ggsave(paste0("TMB/Results/Figure10_Model ", i-1, "retros.png"), g, width=ggw, height=ggh*1.5, dpi=200)
+  ggsave(paste0("TMB/Results/Figure10 Model ", i-1, " retros.png"), g, width=ggw, height=ggh*1.5, dpi=200)
 }
 

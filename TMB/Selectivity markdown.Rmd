@@ -4,12 +4,12 @@ title: "Exploring non-parametric and semi-parametric selectivity using 2d and 3d
 author: "Grant Adams and Cole Monnahan"
 date: "2023-10-17"
 output:
-  word_document: default
-  pdf_document: default
+  pdf_document:
+    latex_engine: xelatex
   html_document:
     df_print: paged
+  word_document: default
 bibliography: selectivity_references.bib
-always_allow_html: yes
 ---
 
 # Executive Summary
@@ -25,17 +25,18 @@ Fishery age composition residuals have suggested misfit for this model for sever
 
 Template Model Builder [TMB; @Kristensen2015] is a software platform designed to estimate complex, non-linear hierarchical models. Its primary feature is the ability to efficiently apply the Laplace approximation to the marginal likelihood, so that process errors can be estimated using standard numerical optimization [@Skaug2006]. It is widely seen as the successor to ADMB, which has limited Laplace approximation capabilities and thus a penalized maximum likelihood approach is generally taken (i.e., process errors fixed and random effects estimated as fixed effects). Despite this important advantage, there have been relatively few implementations for stock assessments in the North Pacific. TMB is used more widely in other areas, such as WHAM [@Stock2021] on the US East Coast, and SAM [@Nielsen2014] in Europe. A WHAM version of the GOA pollock assessment was presented to the Plan Team in 2022, but there are advantages to using a bespoke model like the ADMB version developed by Martin Dorn and used for decades. Here we present a direct port of the 2022 accepted ADMB model 19.1a to TMB. Due to a change in software we name this model 23.0, although our initial goal is to match model 19.1a as close as possible. 
 
-We therefore converted the bespoke ADMB model to TMB. There are a few important differences between ADMB and TMB in terms of syntax and functionality relevant to stock assessments. TMB has no native phased estimation capabilities (although there is an R function that serves a similar purpose) so all parameters are estimated simultaneously starting from their initial values. We used the 19.1a MLE estimates as initial values in model 23 and were able to obtain the same model predictions, and when optimized from there the same standard errors (uncertainties) for parameters and derived quantities (Fig 1.). TMB does not have an equivalent to ADMB’s “dev_vector” parameter class which penalizes a vector to have a mean of zero. Model 19.1a uses this feature by estimating a single mean in addition to the vector. When converting to a standard unpenalized vector, a degree of freedom is lost. The means are thus fixed at arbitrary values and mathematically the two become equivalent. 
+We therefore converted the bespoke ADMB model to TMB. There are a few important differences between ADMB and TMB in terms of syntax and functionality relevant to stock assessments. TMB has no native phased estimation capabilities (although there is an R function that serves a similar purpose) so all parameters are estimated simultaneously starting from their initial values. We used the 19.1a MLE estimates as initial values in model 23 and were able to obtain the same model predictions, and when optimized from there the same standard errors (uncertainties) for parameters and derived quantities ([Fig. 1](#fig1)). TMB does not have an equivalent to ADMB’s “dev_vector” parameter class which penalizes a vector to have a mean of zero. Model 19.1a uses this feature by estimating a single mean in addition to the vector. When converting to a standard unpenalized vector, a degree of freedom is lost. The means are thus fixed at arbitrary values and mathematically the two become equivalent. 
 
-![**Figure 1.** Results of bridging the ADMB 19.1a model to TMB model 23.0. Shown are estimates and standard errors (SE) for two key outputs, annual recruitment (in billions) and spawning stock biomass (SSB; in M t). The differences, calculated as (TMB-ADMB)/ADMB are very small, typically less than 0.02%, and presumably due to differences in the optimizer and precision of data inputs.](Results/Figure1_time_series_of_se.png)
+![Results of bridging the ADMB 19.1a model to TMB model 23.0. Shown are estimates and standard errors (SE) for two key outputs, annual recruitment (in billions) and spawning stock biomass (SSB; in M t). The differences, calculated as (TMB-ADMB)/ADMB are very small, typically less than 0.02%, and presumably due to differences in the optimizer and precision of data inputs.](Results/Figure1_time_series_of_se.png){#fig1}
 
 ## Non-parametric and semi-parametric fisheries selectivity
 
-This stock has had persistent residual patterns in the fishery age composition data for many years, particularly for age 4 and 5 (Fig. 2). This has been a concern of the PT for many years. For instance
+This stock has had persistent residual patterns in the fishery age composition data for many years, particularly for age 4 and 5 ([Fig. 2](#fig2)). This has been a concern of the PT for many years. For instance
 
 *The GOA Plan Team in its November 2019 minutes recommended the author examine fishery selectivity, as persistent patterns in the catch-at-age residuals may represent artifacts of the selectivity functional form used.*
 
-![**Figure 2.** OSA residuals (leaving out age 1) for the 2022 accepted model. Persistent patterns in age 4,5 and 9 fish have been a point of concern.](Results/Figure2_admb_osa.png){#fig:figure2}
+![OSA residuals (leaving out age 1) for the 2022 accepted model. Persistent patterns in age 4,5 and 9 fish have been a point of concern.](Results/Figure2_admb_osa.png){#fig2}
+
 In 2022 several ad hoc approaches were explored which demonstrated that a more flexible fisheries selectivity form could reduce the residual patterns. However, these approaches were difficult to justify and relied on arbitrarily setting likelihood penalties of time-varying selectivity curves. Instead it would be ideal to explore more flexible selectivity options based on published literature, and estimate the amount of flexibility from the data. We therefore use model 23.0 to explore alternative selectivity parameterizations. First, we review three important classes of hierarchical modeling approaches that can be used for selectivity: parametric, non-parametric, and semi-parametric functions.
 
 ### Parametric models
@@ -61,19 +62,6 @@ Semi-parametric selectivity functions are an intermediate between non-parametric
 
 Since model 23 is in TMB it is now possible to explore a large suite of new flexible selectivity forms. We wanted to explore how internally estimating time-varying fisheries selectivity would behave and compare to model 19.1a generally, so we selected a fairly large set of models (Table 1). 
 
-```{r, echo=FALSE, results = 'asis', message=FALSE}
-library(knitr)
-library(kableExtra)
-library(dplyr)
-table1 <- read.csv("Results/Table1_model_description.csv")
-colnames(table1) <- c("Model", "Type",	"Fixed (k) and random (p) effects associated with fisheries selectivity"
-)
-kable1 <- table1 %>%
-  kable(caption = "**Table 1.** Fisheries selectivity models considered and fit.") %>%
-  kable_classic(full_width = F, html_font = "Cambria")
-kable1
-```
-
 The selectivity equation details are given below.
 
 * Mod 0: Parametric double logistic
@@ -97,7 +85,7 @@ The selectivity equation details are given below.
     
 * Mod 4: Semi-parametric double logistic * 2D-AR(1) by age, year
     + $Sel_{age,y}= f_1 (age)*exp⁡(dve_{age,y}))$
-    + $dev_{age,y} \sim MVN(0,\Sigma _{age,y}) $
+    + $dev_{age,y} \sim MVN(0,\Sigma _{age,y})$
 	
 * Mod 5: Non-parametric by age
     + $Sel_{age}=f_2 (age)$
@@ -105,15 +93,15 @@ The selectivity equation details are given below.
 	
 * Mod 6: Non-parametric AR(1) by year
     + $Sel_{age,y}=1/(1+exp(-(selpar_{age}+dev_y))$
-    + $dev_y \sim MVN(0,\Sigma _y) $
+    + $dev_y \sim MVN(0,\Sigma _y)$
 	
 * Mod 7: Non-parametric 2D AR(1) age, year
     + $Sel_{age,y}=1/(1+exp(-(selpar_{age}+dev_{age,y}))$
-    + $dev_{age,y} \sim MVN(0,\Sigma _{age,y}) $
+    + $dev_{age,y} \sim MVN(0,\Sigma _{age,y})$
 	
 * Mod 8: 3D AR(1) by a, y, and cohort using conditional variance 
     + $Sel_{age,y}=1/(1+exp(-(selpar_{age}+dev_{age,y}))$
-    + $dev_{age,y} \sim MVN(0,\Sigma _{age,cohort,y}) $
+    + $dev_{age,y} \sim MVN(0,\Sigma _{age,cohort,y})$
 	
 * Mod 9: 3D AR(1) by a, y, and cohort using marginal variance
     + $Sel_{age,y}=1/(1+exp(-(selpar_{age}+dev_{age,y}))$
@@ -121,6 +109,19 @@ The selectivity equation details are given below.
     
 where $selpar_{age}$ are age-specific parameters for the non-parametric selectivity curve, $dev_{age,y}$ are the random deviates for the non-parametric selectivity that are multivariate normal with covariance $\Sigma$. 
 
+```{r, echo=FALSE, results = 'asis', message=FALSE}
+library(knitr)
+library(kableExtra)
+library(dplyr)
+table1 <- read.csv("Results/Table1_model_description.csv")
+colnames(table1) <- c("Model", "Type",	"Fixed (k) and random (p) effects associated with fisheries selectivity"
+)
+kable1 <- table1 %>%
+  kable(caption = "Fisheries selectivity models considered and fit.", booktabs = T) %>%
+  kable_styling(full_width = TRUE, html_font = "Cambria", font_size = 10)
+
+kable1
+```
 
 ## Selecting and validating flexible selectivity forms
 
@@ -128,11 +129,11 @@ Below we fit the alternative selectivity options (Table 1) to explore model beha
 
 Second, we use marginal AIC for model selection. Model selection is not routinely used for stock assessment models because of the challenges associated with interpreting selection criteria when fitting to different types of data whose weights are often tuned and the use of penalized maximum likelihood [@Maunder2013;@Punt2014]. An added complication with the hierarchical models investigated here is that the penalty for the number of effective parameters does not include the random effects. Conditional AIC accounts for this but is not available at the moment. So, while the interpretation of differences in AIC is not as straightforward as in other statistical contexts, AIC still provides some important insight into the performance of the different models examined here.
 
-Finally, we are interested in the ability of the model to estimate selectivity in the current year and near-term projections when no age data are available to inform selectivity. In previous models a 5-year average was used, but this ignores signals of annual and cohort trends in the data. We compare these approaches using retrospective projections of age-specific selectivity. Specifically, consecutive years of data were removed, the model was refit, selectivity was projected forward one year. Projected age-specific selectivity in year $y$ from a model fit using data until year $y-1$ was compared to estimated age-specific selectivity in year $y$ from a model fit using data until year $y$ using average relative error and mean squared error:
+Finally, we are interested in the ability of the model to estimate selectivity in the current year and near-term projections when no age data are available to inform selectivity. In previous models a 5-year average was used, but this ignores signals of annual and cohort trends in the data. We compare these approaches using retrospective projections of age-specific selectivity and spawning stock biomass for each model. Specifically, consecutive years of data were removed, the model was refit, selectivity was projected forward one year. Projected age-specific selectivity in year $y$ from a model fit using data until year $y-1$ was compared to estimated age-specific selectivity in year $y$ from a model fit using data until year $y$ using average relative error and mean squared error:
 
-$$RE_{M(X),age} = \sum_p^{N_p} \left(Sel_{M(X)_{(y-p)},age,y-p+1} - Sel_{M(X)_{(y)}, age,y-p+1}\right) / Sel_{M(X)_{(y)}, age,y-p+1} / N_p $$
-$$MSE_{M(X),age} = \sum_p^{N_p} \left(Sel_{M(X)_{(y-p)}, age,y-p+1} - Sel_{M(X)_{(y)}, age,y-p+1}\right)^2 / N_p $$
-where $RE_{M(X),age}$ and $MSE_{M(X),age}$ are the relative error and mean squared error, respectively, for projected selectivity-at-age from model $M(X)$ (Table 1), $Sel_{M(X)_{(y-p)},age,y-p+1}$ is the one-year projected selectivity from a model fit using data until year $y-p$ ($M(X)_{(y-p)}$), $Sel_{M(X)_{(y)}, age,y-p+1}$ is the estimated selectivity from model fit using all available data until year $y$ ($M(X)_{(y)}$),and $N_p$ is the number of retrospective peels ($N_p = 7$). Note, that Francis weights were not updated for each retrospective peel. The above metrics were also calculated where projected selectivity $Sel_{M(X)_{(y-p)},age,y-p+1}$ was replaced with the average age-specific selectivity from the last five years, as is currently done for setting reference points. $RE_{M(X),age}$ is referred to as Mohn's Rho, and was also calculated for spawning stock biomass across peels for each model.
+$$RE_{age} = \sum_p^{N_p} \left(Sel_{{M(y-p)},age,y-p+1} - Sel_{{M(y)}, age,y-p+1}\right) / Sel_{M{(y)}, age,y-p+1} / N_p$$
+$$MSE_{age} = \sum_p^{N_p} \left(Sel_{M{(y-p)}, age,y-p+1} - Sel_{M{(y)}, age,y-p+1}\right)^2 / N_p$$
+where $RE_{age}$ and $MSE_{age}$ are the relative error and mean squared error, respectively, for projected selectivity-at-age (Table 1), $Sel_{M{(y-p)},age,y-p+1}$ is the one-year projected selectivity from a model fit using data until year $y-p$ ($M{(y-p)}$), $Sel_{M{(y)}, age,y-p+1}$ is the estimated selectivity from model fit using all available data until year $y$ ($M{(y)}$),and $N_p$ is the number of retrospective peels ($N_p = 7$). Note, that Francis weights were not updated for each retrospective peel. The above metrics were also calculated where projected selectivity $Sel_{M{(y-p)},age,y-p+1}$ was replaced with the average age-specific selectivity from the last five years, as is currently done for setting reference points. $RE_{age}$ is referred to as Mohn's Rho, and was also calculated for spawning stock biomass across peels for each model.
 
 # Results
 
@@ -146,56 +147,58 @@ The estimated AR(1) parameters for the 2D-AR1 model are 0.869 (95% CI of 0.738-0
 table2 <- read.csv("Results/Table2_aic_and rp_comparison.csv")
 colnames(table2) <- c("Model", "Total NLL", "Fsh NLL",	"K",	"dAIC",	"2023 SSB",	"B0",	"B40",	"2023 OFL",	"2023 ABC")
 table2 %>%
-  kable(caption = "**Table 2.** Comparison of selectivity models for the 2022 assessment model. Models selected for comparison are highlighted in grey. NLL=negative log likelihood, Fsh = fishery age composition; K=number of fixed effects; dAIC=delta AIC.") %>%
-  kable_classic(full_width = F, html_font = "Cambria")
+  kable(caption = "Comparison of selectivity models for the 2022 assessment model. Models selected for comparison are highlighted in grey. NLL=negative log likelihood, Fsh = fishery age composition; K=number of fixed effects; dAIC=delta AIC.", booktabs = T) %>%
+  kable_styling(full_width = TRUE, html_font = "Cambria", font_size = 10)
 ```
 
 
-Spawning stock biomass (SSB) was relatively similar among the new TMB models, particularly in later years (Fig. 3) with a projected SSB of between 212 and 226 kt in 2023 (Table 2). However, the TMB models all had a higher 2023 SSB than 19.1a (Table 2) and lower uncertainty (Fig. 3). It is unclear why this is but is likely a configuration issue that can be resolved with more time. The TMB models differ in their calculation of ABC because rather than use the average fishery selectivity from the last five years of the assessment, they use predicted selectivity in 2023.  
+Spawning stock biomass (SSB) was relatively similar among the new TMB models, particularly in later years ([Fig. 3](#fig3)) with a projected SSB of between 212 and 226 kt in 2023 (Table 2). However, the TMB models all had a higher 2023 SSB than 19.1a (Table 2) and lower uncertainty ([Fig. 3](#fig3)). It is unclear why this is but is likely a configuration issue that can be resolved with more time. The TMB models differ in their calculation of ABC because rather than use the average fishery selectivity from the last five years of the assessment, they use predicted selectivity in 2023.  
 
-![**Figure 3.** Resulting spawning stock biomass (SSB, M t) estimates and CV (panels) among the candidate models and the 2022 accepted model 19.1a (“ADMB”). It is currently unclear why the CV is so much lower for the TMB models.](Results/Figure3_ssb_timeseries.png){#fig:figure3}
-The estimated annual selectivity at age also had the same general patterns, but with some important differences. All models estimated selectivity at ages 6-8 near 1 (Figs. 4 & 5). All models also estimated selectivity at age 2 to be near zero except for a period of about 2000-2010. For age 3, all models generally agreed and there appear to be meaningful annual changes, for example in 2008 selectivity was nearly 0.5, but dropped to around 0.2 by 2015. 
+![Resulting spawning stock biomass (SSB, M t) estimates and CV (panels) among the candidate models and the 2022 accepted model 19.1a (“ADMB”). It is currently unclear why the CV is so much lower for the TMB models.](Results/Figure3_ssb_timeseries.png){#fig3}
 
-Key differences among models are concentrated in ages 4 and 5. As noted previously, these are the two ages with poor residuals for the ParDev approach. The largest differences were starting in 2000, with the two nonparametric models estimated lower age-4 selectivity (Fig. 5). Age 5 selectivity was always estimated over 0.75 but again there are some differences annually. Overall, all three models estimated distinct patterns of age 4 and 5 selectivity. This is somewhat surprising given the similarity of the 2D and 3D AR(1) approaches. Differences in estimates in projected years are also meaningful, but described separately below.
+The estimated annual selectivity at age also had the same general patterns, but with some important differences. All models estimated selectivity at ages 6-8 near 1 ([Fig. 4](#fig4) & [Fig. 5](#fig5)). All models also estimated selectivity at age 2 to be near zero except for a period of about 2000-2010. For age 3, all models generally agreed and there appear to be meaningful annual changes, for example in 2008 selectivity was nearly 0.5, but dropped to around 0.2 by 2015. 
 
-![**Figure 4.** Perspective plots of estimated fisheries selectivity for candidate models.](Results/Figure4_annual_selectivity.png){#fig:figure4}
+Key differences among models are concentrated in ages 4 and 5. As noted previously, these are the two ages with poor residuals for the ParDev approach. The largest differences were starting in 2000, with the two nonparametric models estimated lower age-4 selectivity ([Fig. 5](#fig5)). Age 5 selectivity was always estimated over 0.75 but again there are some differences annually. Overall, all three models estimated distinct patterns of age 4 and 5 selectivity. This is somewhat surprising given the similarity of the 2D and 3D AR(1) approaches. Differences in estimates in projected years are also meaningful, but described separately below.
 
-![**Figure 5.** Annual estimates of selectivity at age (panels) with uncertainty (ribbons, +/- 1 SE) for candidate models. The last year with fishery age composition is 2021 and denoted with a vertical line.](Results/Figure5_selectivity_at_age_timeseries.png){#fig:figure5}
+![Perspective plots of estimated fisheries selectivity for candidate models.](Results/Figure4_annual_selectivity.png){#fig4}
+
+![Annual estimates of selectivity at age (panels) with uncertainty (ribbons, +/- 1 SE) for candidate models. The last year with fishery age composition is 2021 and denoted with a vertical line.](Results/Figure5_selectivity_at_age_timeseries.png){#fig5}
 
 ## Model selection and validation
 
-OSA residuals for the Constant model show clear patterns and unexpectedly large OSA residuals (Fig. 6). This justifies more flexible selectivity forms. The ParDevs model shows much improvement, but still has lingering patterns in ages 4, 5, and 9, despite having a similar AIC value. The two non-parametric models eliminated the previous issues, and have no lingering age or year patterns. There does appear to be a lingering cohort pattern for the 2012 year class (diagonal positive residuals).
+OSA residuals for the Constant model show clear patterns and unexpectedly large OSA residuals ([Fig. 6](#fig6)). This justifies more flexible selectivity forms. The ParDevs model shows much improvement, but still has lingering patterns in ages 4, 5, and 9, despite having a similar AIC value. The two non-parametric models eliminated the previous issues, and have no lingering age or year patterns. There does appear to be a lingering cohort pattern for the 2012 year class (diagonal positive residuals).
 
-![**Figure 6.** OSA residuals for the three candidate models compared to a model with time-invariant selectivity (Constant). Residuals are expected to have a standard normal distribution, so residuals larger than 3 are highlighted as a different shape. ](Results/Figure6_osa_tmb.png){#fig:figure6}
+![OSA residuals for the three candidate models compared to a model with time-invariant selectivity (Constant). Residuals are expected to have a standard normal distribution, so residuals larger than 3 are highlighted as a different shape. ](Results/Figure6_osa_tmb.png){#fig6}
 
-One important property of OSA residuals is that they are expected to have a standard normal distribution. Standard QQ plots (Fig. 7) show that the unexpectedly large residuals using the Constant model are eliminated by the three time-varying selectivity models. However, there still seem to be some distributional issues remaining, although we judge this to be of minor concern. We do note that the QQ plots for the two non-parametric models appear slightly better than the ParDevs approach currently used in 19.1a.  
+One important property of OSA residuals is that they are expected to have a standard normal distribution. Standard QQ plots ([Fig. 7](#fig7)) show that the unexpectedly large residuals using the Constant model are eliminated by the three time-varying selectivity models. However, there still seem to be some distributional issues remaining, although we judge this to be of minor concern. We do note that the QQ plots for the two non-parametric models appear slightly better than the ParDevs approach currently used in 19.1a.  
 
-![**Figure 7.** Quantile-quantile plots of candidate models OSA residuals, which are expected to be standard normal and thus fall on the black line. Deviation from that implies model misfit.](Results/Figure7_qqplot.png){#fig:figure7}
+![Quantile-quantile plots of candidate models OSA residuals, which are expected to be standard normal and thus fall on the black line. Deviation from that implies model misfit.](Results/Figure7_qqplot.png){#fig7}
 ## Projection performance
 
-Fisheries selectivity for the current assessment year has no fisheries age composition data and so needs to be extrapolated by the assessment model. Further, reference point and ABC calculations rely on estimates of selectivity in the following year. These projected selectivities are expected to vary among models. The ParDevs model which has a random walk on parameters will have the same prediction as the last year with data, but increasing uncertainty with further extrapolation into the future (Fig. 8). The two AR(1) models will converge toward their stationary means, but the addition of the cohort effect for the 3D method will affect the estimates and transitory behavior toward the mean. For many ages there is little meaningful difference. The age with the most divergence among models is age 4, where selectivity is 0.91 for the ParDevs, 0.68 for the 2D-AR1 model, and 0.63 for the 3D-AR1 model. Interestingly the selectivity is increasing for the 2D model and decreasing for the 3D model for this age. We hypothesize this is caused by a cohort effect, although it is not strictly statistically significant.
+Fisheries selectivity for the current assessment year has no fisheries age composition data and so needs to be extrapolated by the assessment model. Further, reference point and ABC calculations rely on estimates of selectivity in the following year. These projected selectivities are expected to vary among models. The ParDevs model which has a random walk on parameters will have the same prediction as the last year with data, but increasing uncertainty with further extrapolation into the future ([Fig. 8](#fig8)). The two AR(1) models will converge toward their stationary means, but the addition of the cohort effect for the 3D method will affect the estimates and transitory behavior toward the mean. For many ages there is little meaningful difference. The age with the most divergence among models is age 4, where selectivity is 0.91 for the ParDevs, 0.68 for the 2D-AR1 model, and 0.63 for the 3D-AR1 model. Interestingly the selectivity is increasing for the 2D model and decreasing for the 3D model for this age. We hypothesize this is caused by a cohort effect, although it is not strictly statistically significant.
 
-![**Figure 8.** Behavior of the selectivity modules when projecting past the last year with fishery age comp data (2021; vertical line). Annual estimates of selectivity at age (panels) with uncertainty (ribbons, +/- 1 SE) for candidate models. Ages 1, 6,7 and 8 are left off for visual clarity as they are nearly constant at 0 or 1 (see Fig. 5). The ParDev model is a random walk so its projections are constant with increasing uncertainty. The 2D-AR1 model reverts back to its stationary mean. The 3D-AR1 model accounts for cohort effects and thus behaves slightly differently from the 2D version.](Results/Figure8_projected_sel.png){#fig:figure8}
+![Behavior of the selectivity modules when projecting past the last year with fishery age comp data (2021; vertical line). Annual estimates of selectivity at age (panels) with uncertainty (ribbons, +/- 1 SE) for candidate models. Ages 1, 6,7 and 8 are left off for visual clarity as they are nearly constant at 0 or 1 (see Fig. 5). The ParDev model is a random walk so its projections are constant with increasing uncertainty. The 2D-AR1 model reverts back to its stationary mean. The 3D-AR1 model accounts for cohort effects and thus behaves slightly differently from the 2D version.](Results/Figure8_projected_sel.png){#fig8}
 
-There are thus important differences, especially in younger ages, for the predicted selectivity at the two important extrapolated years (Fig. 9).
+There are thus important differences, especially in younger ages, for the predicted selectivity at the two important extrapolated years ([Fig. 9](#fig9)).
 
-![**Figure 9.** Estimated selectivity with uncertainty (+/- 1 SE) for the three models in the two important projection years.](Results/Figure9_selectivity_at_age_projections.png){#fig:figure9}
+![Estimated selectivity with uncertainty (+/- 1 SE) for the three models in the two important projection years.](Results/Figure9_selectivity_at_age_projections.png){#fig9}
 
 ## Retrospective performance
-Overall, the 3D-AR1 model had the lowest retrospective bias in spawning stock biomass (Figure 10). When evaluating retrospective bias of age-specific selectivity, it is clear that across models 1 and 7, using the projected selectivity outperforms using the average selectivity from the last five years of the assessment (Table 3). However, the result is variable for model 8. However, age-specific retrospective bias varied across selectivity functions. For example, projected selectivity from Model 8 had lower mean squared error for ages 1-4 than projected selectivity from Model 1, but much higher mean squared error for 6+.
+Overall, the 3D-AR1 model had the lowest retrospective bias in spawning stock biomass ([Fig. 10](#fig10) & [Fig. 11](#fig11) & [Fig. 12](#fig12)). When evaluating retrospective bias of age-specific selectivity, it is clear that across models 1 and 7, using the projected selectivity outperforms using the average selectivity from the 4 years prior to the terminal year of the assessment (Table 3). However, the result is variable for model 8. However, age-specific retrospective bias varied across selectivity functions. For example, projected selectivity from Model 8 had lower mean squared error for ages 2-3 than projected selectivity from Model 1, but much higher mean squared error for 6+.
 
 ```{r, echo = FALSE, results = 'asis'}
 table3 <- read.csv("Results/Table3_Retrospective_selectivity.csv")
 table3 %>%
   filter(Model %in% c(paste0("mod", c(1,7,8)))) %>%
-  select(-X) %>%
-  kable(caption = "**Table 3.** Retrospective metrics for age-specific selectivity") %>%
-  kable_classic(full_width = T, html_font = "Cambria")
+  select(-X, -Age1) %>%
+  kable(caption = "Retrospective metrics for age-specific selectivity", digits = 4, booktabs = T) %>%
+  kable_styling(full_width = TRUE, html_font = "Cambria", font_size = 10)
 ```
 
-![**Figure 10.a.** Retrospective spawning stock biomass for model 1 (parDevs) with n = 5 peels](Results/Figure10_Model 1retros.png){#fig:figure10}
-![**Figure 10.b.** Retrospective spawning stock biomass for model 7 (2D AR1) with n = 5 peels](Results/Figure10_Model 7retros.png){#fig:figure10}
-![**Figure 10.c.** Retrospective spawning stock biomass for model 8 (3D AR1) with n = 5 peels](Results/Figure10_Model 8retros.png){#fig:figure10}
+![Retrospective spawning stock biomass for model 1 (parDevs) with n = 5 peels](Results/Figure10 Model 1 retros.png){#fig10}
+
+![Retrospective spawning stock biomass for model 7 (2D AR1) with n = 5 peels](Results/Figure10 Model 7 retros.png){#fig11}
+![Retrospective spawning stock biomass for model 8 (3D AR1) with n = 5 peels](Results/Figure10 Model 8 retros.png){#fig12}
 
 # Conclusions
 
