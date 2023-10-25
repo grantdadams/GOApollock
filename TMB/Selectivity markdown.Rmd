@@ -13,7 +13,7 @@ bibliography: selectivity_references.bib
 
 # Executive Summary
 
-Fishery age composition residuals have suggested misfit for this model for several decades, and has been a point of concern for the PT and SSC. More flexible configurations for fishery selectivity need to be explored.  Facilitation of a new suite of more flexible non-parametric and semi-parametric selectivities in a more rigorous statistical framework requires moving away from ADMB and toward its replacement TMB. We thus ported model 19.1a (the 2022 final model) to TMB and demonstrate nearly identical estimates. We call the TMB version of 19.1a model 23.0 to reflect the change in software framework. We then used model 23.0 to explore a suite of fisheries selectivities which vary in their flexibility and where that flexibility is permitted. We conclude that two non-parametric models would make for an improved fisheries selectivity formulation based on analyzing OSA residuals, AIC model selection, and performance in projected selectivity. The models are 23.0a which uses a 2D AR(1) model, and 23.0b which uses a so-called 3D AR(1) process that parses age, year, and cohort correlations from the data. These models are not expected to greatly impact management advice, but we believe their improved performance and projection capabilities make for a better stock assessment moving forward.
+Fishery age composition residuals have suggested misfit for this model for several decades, and has been a point of concern for the PT and SSC. More flexible configurations for fishery selectivity need to be explored.  Facilitation of a new suite of more flexible non-parametric and semi-parametric selectivities in a more rigorous statistical framework requires moving away from ADMB and toward its replacement TMB. We thus ported model 19.1a (the 2022 final model) to TMB and demonstrate nearly identical estimates. We call the TMB version of 19.1a model 23.0 to reflect the change in software framework. We then used model 23.0 to explore a suite of fisheries selectivities which vary in their flexibility and where that flexibility is permitted. We conclude that two non-parametric models would make for an improved fisheries selectivity formulation based on analyzing OSA residuals, AIC model selection, and reduction in retrospective bias. The models are 23.0a which uses a 2D AR(1) model, and 23.0b which uses a so-called 3D AR(1) process that parses age, year, and cohort correlations from the data. These models are not expected to greatly impact management advice, but we believe their improved performance and projection capabilities make for a better stock assessment moving forward.
 
 **The authors recommend moving to 23.0 this year, and leave it up to PT discretion whether to adopt 23.0a or 23.0b this year.**
 
@@ -122,6 +122,8 @@ kable1 <- table1 %>%
 kable1
 ```
 
+\pagebreak
+
 ## Selecting and validating flexible selectivity forms
 
 Below we fit the alternative selectivity options (Table 1) to explore model behavior and help understand the level of complexity and flexibility needed to appropriately model fisheries selectivity. We use three primary tools to compare and contrast these models. First, we use one-step-ahead (OSA) residuals which are an improved tool over the ubiquitous Pearson residuals [@Trijoulet2023]. These residuals are expected to be standard normal under a correctly-specified model. We focus on visual inspection via bubble plots for non-random patterns by age, year, or cohort, as is common for Pearson residuals, instead of relying on statistical tests of normality or other properties. In particular for this example we focus on residuals for ages 3-5 which have been identified as problematic previously.
@@ -186,6 +188,8 @@ There are thus important differences, especially in younger ages, for the predic
 ## Retrospective performance
 Overall, the 3D-AR1 model had the lowest retrospective bias in spawning stock biomass ([Fig. 10](#fig10) & [Fig. 11](#fig11) & [Fig. 12](#fig12)). When evaluating retrospective bias of age-specific selectivity, using the projected selectivity generally outperforms using the average selectivity from the 4 years prior to the terminal year of the assessment for models 1, 7, and 8 (Table 3). However, age-specific retrospective bias varied across selectivity functions. For example, projected selectivity from Model 8 had lower mean squared error for ages 2-4 than projected selectivity from Model 1, but much higher mean squared error for 6+.
 
+
+
 ```{r, echo = FALSE, results = 'asis'}
 table3 <- read.csv("Results/Table3_Retrospective_selectivity.csv")
 table3 %>%
@@ -201,14 +205,15 @@ table3 %>%
 
 ![Retrospective spawning stock biomass for model 8 (3D AR1) with n = 7 peels](Results/Figure10 Model 8 retros.png){#fig12}
 
+\pagebreak
+
 # Conclusions
 
 Moving from ADMB to TMB has a few minor disadvantages which are clearly outweighed by the advantage of being able to estimate hierarchical models in a statistically defensible way. Hierarchical or “state space” models are now considered “best practices” for stock assessment [@Punt2023] and TMB is the best available tool to accommodate that framework. We were able to bridge from the ADMB model 19.1a to within a very small degree of error. **As such we recommend retiring the ADMB model and proceeding with model 23 in TMB for use moving forward. ** This modeling framework will allow for important future extensions beyond fisheries selectivity as well (e.g., maturity and weight at age smoothing internally).
 
-It is also clear that fisheries selectivity varies over time and that the current approach of random walk parameter deviations (ParDev model) is insufficiently flexible for some ages, as determined by residual patterns. The semi-parametric models explored here did not perform well, for reasons that are not completely clear at the moment. But two of the non-parametric models were very promising and had improved residual patterns. The 3D model had the lowest AIC, with the 2D model about 10 units worse. We believe both non-parametric models would make for improved fits and projected selectivities for use in calculating management quantities. The major disadvantage of the non-parametric models is that they are about 10 times slower to fit than the parametric version with annual deviates (ParDevs), going from 4 to 40 minutes to optimize and do the delta method calculations. 
+It is also clear that fisheries selectivity varies over time and that the current approach of random walk parameter deviations (ParDev model) is insufficiently flexible for some ages, as determined by residual patterns. The semi-parametric models explored here did not perform well, for reasons that are not completely clear at the moment. But two of the non-parametric models were very promising and had improved residual patterns and retrospective performance. The 3D model had the lowest AIC and Mohn's Rho, with the 2D model about 10 units worse. We believe both non-parametric models would make for improved fits and projected selectivities for use in calculating management quantities. The major disadvantage of the non-parametric models is that they are about 10 times slower to fit than the parametric version with annual deviates (ParDevs), going from 4 to 40 minutes to optimize and do the delta method calculations. 
 
-Estimating non-parametric components within an assessment takes care, as putting flexibility in the wrong component can lead to poor management advice [@Szuwalski2018; @Fisch2023]. We feel confident that selectivity does vary through time, and that the forms examined here do a good job at capturing this change. The new forms also did not lead to major changes in status, trend, or reference points among different selectivity options, but there is a remaining discrepancy when compared to 19.1a that we need to investigate and resolve. Overall, we conclude that either non-parametric option would make for an improved model, with the 3D version fitting slightly better and having a cohort effect, but being more difficult to estimate. We therefore propose models 23.0a as 23 but with 2D AR(1) fisheries selectivity, and 23.0b with 3D AR(1) conditional variance. **We leave it up to the PT discretion whether to adopt these models this year.**
-
+Estimating non-parametric components within an assessment takes care, as putting flexibility in the wrong component can lead to poor management advice [@Szuwalski2018; @Fisch2023]. We feel confident that selectivity does vary through time, and that the forms examined here do a good job at capturing this change. The new forms also did not lead to major changes in status, trend, or reference points among different selectivity options, but there is a remaining discrepancy when compared to 19.1a that we need to investigate and resolve. Overall, we conclude that either non-parametric option would make for an improved model, with the 3D version fitting slightly better and having a cohort effect, but being more difficult to estimate. 
 
 
 # References
