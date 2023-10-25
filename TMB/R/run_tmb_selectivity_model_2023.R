@@ -359,9 +359,10 @@ fits <- list(fit_mod0=fit_mod0,
              fit_mod5=fit_mod5,
              fit_mod6=fit_mod6,
              fit_mod7=fit_mod7,
-             fit_mod8=fit_mod8,
+             fit_mod8=fit_mod8
              # fit_mod9=fit_mod9,
-             fit_mod10=fit_mod10)
+             # fit_mod10=fit_mod10
+             )
 saveRDS(fits, 'TMB/Output/2023_fits.RDS')
 
 #
@@ -389,9 +390,9 @@ peels <- list(peels_mod0=peels_mod0,
               peels_mod5=peels_mod5,
               peels_mod6=peels_mod6,
               peels_mod7=peels_mod7,
-              peels_mod8=peels_mod8,
+              peels_mod8=peels_mod8
               # peels_mod9=peels_mod9,
-              peels_mod10=peels_mod10
+              # peels_mod10=peels_mod10
               )
 saveRDS(peels, 'TMB/Output/2023_peels.RDS')
 
