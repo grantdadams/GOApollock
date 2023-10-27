@@ -176,7 +176,7 @@ for(i in c(1,2,8,9)){
   g1 <- g1 +
     geom_point(data=tmp2, aes(y=SSB, color=factor(peel)), size=2) +
     theme(legend.position='none') +
-    annotate('label', x=2008,y=.05, label=paste0(tmp2$model[1], " (Mohn's Rho =", 100 * round(tmp2$Mohns[1],3), ")")) +
+    annotate('label', x=2008,y=.05, label=paste0(tmp2$model[1], " (Mohn's Rho =", round(tmp2$Mohns[1],3), ")")) +
     labs(x=NULL, y='Spawning Biomass (million t)')
 
 
