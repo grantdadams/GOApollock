@@ -98,7 +98,7 @@ peel_data <- function(dat, peel){
   d$wt_fsh <- d$wt_fsh[i0,]
 
   # - Catch-at-age
-  i1 <- which(d$fshyrs<=d$endyr)
+  i1 <- which(d$fshyrs<d$endyr)
   d$fshyrs <- d$fshyrs[i1]                # age comp yrs
   d$nyrs_fsh <- length(i1)
   d$multN_fsh <- d$multN_fsh[i1]

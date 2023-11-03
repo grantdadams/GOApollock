@@ -33,7 +33,7 @@ dat$seltype <- 1
 input_mod0 <- list(version="mod0", path="TMB/src/",
                    modfile="goa_pk_tmb",
                    dat=dat, pars=pars, map=map_mod0, random=NULL)
-fit_mod0 <- fit_pk(input=input_mod0, getsd=TRUE, control=control, use_bounds = TRUE)
+fit_mod0 <- fit_pk(input=input_mod0, getsd=TRUE, control=control, use_bounds = FALSE)
 peels_mod0 <- fit_pk_retros(fit_mod0, peels = 1:7)
 peels_mod0 <- c(list(fit_mod0), peels_mod0)
 
@@ -62,7 +62,7 @@ random <- c("slp1_fsh_dev", "inf1_fsh_dev", "slp2_fsh_dev", "inf2_fsh_dev")
 input_mod1 <- list(version="mod1", path="TMB/src/",
                    modfile="goa_pk_tmb",
                    dat=dat, pars=pars, map=map_mod1, random=random)
-fit_mod1 <- fit_pk(input=input_mod1, getsd=TRUE, control=control, use_bounds = TRUE, newtonsteps=3, silent = TRUE)
+fit_mod1 <- fit_pk(input=input_mod1, getsd=TRUE, control=control, use_bounds = FALSE, newtonsteps=3, silent = TRUE)
 peels_mod1 <- fit_pk_retros(fit_mod1, peels = 1:7)
 peels_mod1 <- c(list(fit_mod1), peels_mod1)
 
@@ -94,7 +94,7 @@ random <- c("selpars_re")
 input_mod2 <- list(version="mod2", path="TMB/src/",
                    modfile="goa_pk_tmb",
                    dat=dat, pars=pars, map=map_mod2, random=random)
-fit_mod2 <- fit_pk(input=input_mod2, getsd=TRUE, control=control, use_bounds = TRUE)
+fit_mod2 <- fit_pk(input=input_mod2, getsd=TRUE, control=control, use_bounds = FALSE)
 peels_mod2 <- fit_pk_retros(fit_mod2, peels = 1:7)
 peels_mod2 <- c(list(fit_mod2), peels_mod2)
 
@@ -128,7 +128,7 @@ random <- c("selpars_re")
 input_mod3 <- list(version="mod3", path="TMB/src/",
                    modfile="goa_pk_tmb",
                    dat=dat, pars=pars_mod3, map=map_mod3, random=random)
-fit_mod3 <- fit_pk(input=input_mod3, getsd=TRUE, control=control, use_bounds = TRUE, newtonsteps=3)
+fit_mod3 <- fit_pk(input=input_mod3, getsd=TRUE, control=control, use_bounds = FALSE, newtonsteps=3)
 peels_mod3 <- fit_pk_retros(fit_mod3, peels = 1:7)
 peels_mod3 <- c(list(fit_mod3), peels_mod3)
 
@@ -163,7 +163,7 @@ random <- c("selpars_re")
 input_mod4 <- list(version="mod4", path="TMB/src/",
                    modfile="goa_pk_tmb",
                    dat=dat, pars=pars_mod4, map=map_mod4, random=random)
-fit_mod4 <- fit_pk(input=input_mod4, getsd=TRUE, control=control, use_bounds = TRUE, newtonsteps=2)
+fit_mod4 <- fit_pk(input=input_mod4, getsd=TRUE, control=control, use_bounds = FALSE, newtonsteps=2)
 peels_mod4 <- fit_pk_retros(fit_mod4, peels = 1:7)
 peels_mod4 <- c(list(fit_mod4), peels_mod4)
 
@@ -185,7 +185,7 @@ dat$seltype <- 5
 input_mod5 <- list(version="mod5", path="TMB/src/",
                    modfile="goa_pk_tmb",
                    dat=dat, pars=pars, map=map_mod5, random=random)
-fit_mod5 <- fit_pk(input=input_mod5, getsd=TRUE, control=control, use_bounds = TRUE, newtonsteps=2)
+fit_mod5 <- fit_pk(input=input_mod5, getsd=TRUE, control=control, use_bounds = FALSE, newtonsteps=2)
 peels_mod5 <- fit_pk_retros(fit_mod5, peels = 1:7)
 peels_mod5 <- c(list(fit_mod5), peels_mod5)
 
@@ -215,7 +215,7 @@ random <- c("selpars_re")
 input_mod6 <- list(version="mod6", path="TMB/src/",
                    modfile="goa_pk_tmb",
                    dat=dat, pars=pars_mod6, map=map_mod6, random=random)
-fit_mod6 <- fit_pk(input=input_mod6, getsd=TRUE, control=control, use_bounds = TRUE, newtonsteps=3)
+fit_mod6 <- fit_pk(input=input_mod6, getsd=TRUE, control=control, use_bounds = FALSE, newtonsteps=3)
 peels_mod6 <- fit_pk_retros(fit_mod6, peels = 1:7)
 peels_mod6 <- c(list(fit_mod6), peels_mod6)
 
@@ -246,7 +246,7 @@ random <- c("selpars_re")
 input_mod7 <- list(version="mod7", path="TMB/src/",
                    modfile="goa_pk_tmb",
                    dat=dat, pars=pars_mod7, map=map_mod7, random=random)
-fit_mod7 <- fit_pk(input=input_mod7, getsd=TRUE, control=control, use_bounds = TRUE, newtonsteps=2)
+fit_mod7 <- fit_pk(input=input_mod7, getsd=TRUE, control=control, use_bounds = FALSE, newtonsteps=2)
 peels_mod7 <- fit_pk_retros(fit_mod7, peels = 1:7)
 peels_mod7 <- c(list(fit_mod7), peels_mod7)
 
@@ -279,42 +279,42 @@ random <- c("selpars_re")
 input_mod8 <- list(version="mod8", path="TMB/src/",
                    modfile="goa_pk_tmb",
                    dat=dat, pars=pars_mod8, map=map_mod8, random=random)
-fit_mod8 <- fit_pk(input=input_mod8, getsd=TRUE, control=control, use_bounds = TRUE, newtonsteps=2)
-peels_mod8 <- fit_pk_retros(fit_mod8, peels = 1:7)
+fit_mod8 <- fit_pk(input=input_mod8, getsd=TRUE, control=control, use_bounds = FALSE, newtonsteps=2)
+peels_mod8 <- fit_pk_retros(fit_mod8, peels = 1:6)
 peels_mod8 <- c(list(fit_mod8), peels_mod8)
 
 
-## MODEL 9 ----
-# - Non-parametric 3D-AR1 age, year, cohort random effects using marginal var
-# - Turn on mean_sel, rho (a,y,c), sd, and ranef vector
-map_mod9 <- map
-pars_mod9 <- pars
-
-# -- Random effect pars
-pars_mod9$selpars_re <- array(0, dim = c(dat$trmage, dat$nyrs + dat$projfsh_nyrs))
-map_mod9$selpars_re <- as.factor(1:length(pars_mod9$selpars_re))
-
-# -- Fixed effect pars
-map_mod9$ln_sel_sd <- as.factor(1)
-map_mod9$sel_rho_a <- as.factor(1)
-map_mod9$sel_rho_y <- as.factor(1)
-map_mod9$sel_rho_c <- as.factor(1)
-map_mod9$mean_sel <- as.factor(1:dat$nages)
-
-# -- Data switch
-dat$seltype <- 8
-dat$sel_vartype <- 1
-
-# - Build model
-random <- c("selpars_re")
-
-# - Run model 1
-input_mod9 <- list(version="mod9", path="TMB/src/",
-                   modfile="goa_pk_tmb",
-                   dat=dat, pars=pars_mod9, map=map_mod9, random=random)
-fit_mod9 <- fit_pk(input=input_mod9, getsd=TRUE, control=control, use_bounds = TRUE, newtonsteps=3)
-peels_mod9 <- fit_pk_retros(fit_mod9, peels = 1:7)
-peels_mod9 <- c(list(fit_mod9), peels_mod9)
+# ## MODEL 9 ----
+# # - Non-parametric 3D-AR1 age, year, cohort random effects using marginal var
+# # - Turn on mean_sel, rho (a,y,c), sd, and ranef vector
+# map_mod9 <- map
+# pars_mod9 <- pars
+#
+# # -- Random effect pars
+# pars_mod9$selpars_re <- array(0, dim = c(dat$trmage, dat$nyrs + dat$projfsh_nyrs))
+# map_mod9$selpars_re <- as.factor(1:length(pars_mod9$selpars_re))
+#
+# # -- Fixed effect pars
+# map_mod9$ln_sel_sd <- as.factor(1)
+# map_mod9$sel_rho_a <- as.factor(1)
+# map_mod9$sel_rho_y <- as.factor(1)
+# map_mod9$sel_rho_c <- as.factor(1)
+# map_mod9$mean_sel <- as.factor(1:dat$nages)
+#
+# # -- Data switch
+# dat$seltype <- 8
+# dat$sel_vartype <- 1
+#
+# # - Build model
+# random <- c("selpars_re")
+#
+# # - Run model 1
+# input_mod9 <- list(version="mod9", path="TMB/src/",
+#                    modfile="goa_pk_tmb",
+#                    dat=dat, pars=pars_mod9, map=map_mod9, random=random)
+# fit_mod9 <- fit_pk(input=input_mod9, getsd=TRUE, control=control, use_bounds = FALSE, newtonsteps=3)
+# peels_mod9 <- fit_pk_retros(fit_mod9, peels = 1:7)
+# peels_mod9 <- c(list(fit_mod9), peels_mod9)
 
 
 ## MODEL 10 ----
@@ -344,7 +344,7 @@ random <- c("selpars_re")
 input_mod10 <- list(version="mod10", path="TMB/src/",
                     modfile="goa_pk_tmb",
                     dat=dat, pars=pars_mod10, map=map_mod10, random=random)
-fit_mod10 <- fit_pk(input=input_mod10, getsd=TRUE, control=control, use_bounds = TRUE, newtonsteps=2)
+fit_mod10 <- fit_pk(input=input_mod10, getsd=TRUE, control=control, use_bounds = FALSE, newtonsteps=2)
 peels_mod10 <- fit_pk_retros(fit_mod10, peels = 1:7)
 peels_mod10 <- c(list(fit_mod10), peels_mod10)
 
@@ -359,25 +359,26 @@ fits <- list(fit_mod0=fit_mod0,
              fit_mod5=fit_mod5,
              fit_mod6=fit_mod6,
              fit_mod7=fit_mod7,
-             fit_mod8=fit_mod8,
+             fit_mod8=fit_mod8
              # fit_mod9=fit_mod9,
-             fit_mod10=fit_mod10)
+             # fit_mod10=fit_mod10
+             )
 saveRDS(fits, 'TMB/Output/2023_fits.RDS')
 
-
-fits  <- readRDS('TMB/Output/2023_fits.RDS')
-
-fit_mod0=fits[[1]]
-fit_mod1=fits[[2]]
-fit_mod2=fits[[3]]
-fit_mod3=fits[[4]]
-fit_mod4=fits[[5]]
-fit_mod5=fits[[6]]
-fit_mod6=fits[[7]]
-fit_mod7=fits[[8]]
-fit_mod8=fits[[9]]
-# fit_mod9=fit_mod9
-fit_mod10=fits[[10]]
+#
+# fits  <- readRDS('TMB/Output/2023_fits.RDS')
+#
+# fit_mod0=fits[[1]]
+# fit_mod1=fits[[2]]
+# fit_mod2=fits[[3]]
+# fit_mod3=fits[[4]]
+# fit_mod4=fits[[5]]
+# fit_mod5=fits[[6]]
+# fit_mod6=fits[[7]]
+# fit_mod7=fits[[8]]
+# fit_mod8=fits[[9]]
+# # fit_mod9=fit_mod9
+# fit_mod10=fits[[10]]
 
 
 # - Peels
@@ -389,8 +390,17 @@ peels <- list(peels_mod0=peels_mod0,
               peels_mod5=peels_mod5,
               peels_mod6=peels_mod6,
               peels_mod7=peels_mod7,
-              peels_mod8=peels_mod8,
+              peels_mod8=peels_mod8
               # peels_mod9=peels_mod9,
-              peels_mod10=peels_mod10)
+              # peels_mod10=peels_mod10
+              )
 saveRDS(peels, 'TMB/Output/2023_peels.RDS')
+
+
+# - Peels
+peels2 <- list(peels_mod0=peels_mod0,
+              peels_mod1=peels_mod1,
+              peels_mod7=peels_mod7,
+              peels_mod8=peels_mod8)
+saveRDS(peels2, 'TMB/Output/2023_peels_main.RDS')
 
