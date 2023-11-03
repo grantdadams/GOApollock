@@ -4,11 +4,12 @@ title: "Appendix 1F: Exploring non-parametric and semi-parametric selectivity us
 author: "Grant D. Adams and Cole C. Monnahan"
 date: "2023-10-17"
 output:
-  pdf_document:
+  word_document: default
   html_document:
     df_print: paged
-  word_document: default
+  pdf_document:
 bibliography: selectivity_references.bib
+always_allow_html: true
 ---
 
 # Executive Summary
@@ -72,8 +73,8 @@ The selectivity equation details are given below.
     + $Sel_{(age,y)} = f_1(age)$ as above but:
     + $slp_{1,y}=slpdev_{1,y}$
     + $inf_{1,y}=inf_dev_{1,y}$
-    + $slpdev_y-slpdev_{y-1} \sim N(0,\sigma )$
-    + $infdev_y-infdev_{y-1} \sim N(0,4*\sigma )$
+    + $slpdev_{1,y}-slpdev_{1,y-1} \sim N(0,\sigma )$
+    + $infdev_{1,y}-infdev_{1,y-1} \sim N(0,4*\sigma )$
     
 * Mod 2: Semi-parametric double logistic * AR(1) by age
     + $Sel_{age} = f_1(age)*exp(dev_{age})$
@@ -94,14 +95,6 @@ The selectivity equation details are given below.
 * Mod 6: Non-parametric AR(1) by year
     + $Sel_{age,y}=1/(1+exp(-(selpar_{age}+dev_y))$
     + $dev_y \sim MVN(0,\Sigma_y)$
-	
-* Mod 7: Non-parametric 2D AR(1) age, year
-    + $Sel_{age,y}=1/(1+exp(-(selpar_{age}+dev_{age,y}))$
-    + $dev_{age,y} \sim MVN(0,\Sigma _{age,y})$
-	
-* Mod 8: 3D AR(1) by a, y, and cohort using conditional variance 
-    + $Sel_{age,y}=1/(1+exp(-(selpar_{age}+dev_{age,y}))$
-    + $dev_{age,y} \sim MVN(0,\Sigma _{age,cohort,y})$
 	
 * Mod 7: Non-parametric 2D AR(1) age, year
     + $Sel_{age,y}=1/(1+exp(-(selpar_{age}+dev_{age,y}))$
