@@ -4,10 +4,10 @@ title: "Appendix 1F: Exploring non-parametric and semi-parametric selectivity us
 author: "Grant D. Adams and Cole C. Monnahan"
 date: "2023-10-17"
 output:
-  word_document: default
+  pdf_document:
   html_document:
     df_print: paged
-  pdf_document:
+  word_document: default
 bibliography: selectivity_references.bib
 always_allow_html: true
 ---
@@ -33,12 +33,12 @@ This stock has had persistent residual patterns in the fishery age composition d
 
 *The GOA Plan Team in its November 2019 minutes recommended the author examine fishery selectivity, as persistent patterns in the catch-at-age residuals may represent artifacts of the selectivity functional form used.*
 
-![**Figure 2.** OSA residuals (leaving out age 1) for the 2022 accepted model. Persistent patterns in age 4,5 and 9 fish have been a point of concern.](Results/Figure2_admb_osa.png){#fig:figure2}
-In 2022 several ad hoc approaches were explored which demonstrated that a more flexible fisheries selectivity form could reduce the residual patterns. However, these approaches were difficult to justify and relied on arbitrarily setting likelihood penalties of time-varying selectivity curves. Instead it would be ideal to explore more flexible selectivity options based on published literature, and estimate the amount of flexibility from the data. We therefore use model 23.0 to explore alternative selectivity parameterizations. First, we review three important classes of hierarchical modeling approaches that can be used for selectivity: parametric, non-parametric, and semi-parametric functions. 
-=======
+
 ![OSA residuals (leaving out age 1) for the 2022 accepted model. Persistent patterns in age 4, 5, and 9 fish have been a point of concern.](Results/Figure2_admb_osa.png){#fig2}
 
 In 2022 several ad hoc approaches were explored which demonstrated that a more flexible fisheries selectivity form could reduce the residual patterns. However, these approaches were difficult to justify and relied on arbitrarily setting likelihood penalties of time-varying selectivity curves. Instead it would be ideal to explore more flexible selectivity options based on published literature, and estimate the amount of flexibility from the data. We therefore use model 23.0 to explore alternative selectivity parameterizations. First, we review three important classes of hierarchical modeling approaches that can be used for selectivity: parametric, non-parametric, and semi-parametric functions.
+
+\pagebreak
 
 ### Parametric models
 
