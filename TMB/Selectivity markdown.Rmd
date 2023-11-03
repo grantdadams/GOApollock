@@ -1,13 +1,10 @@
 ---
-title: "Exploring non-parametric and semi-parametric selectivity using 2d and 3d AR(1)
+title: "Appendix 1F: Exploring non-parametric and semi-parametric selectivity using 2d and 3d AR(1)
   smoothers"
-author: "Grant Adams and Cole Monnahan"
+author: "Grant D. Adams and Cole C. Monnahan"
 date: "2023-10-17"
 output:
-  word_document: default
   pdf_document: default
-  html_document:
-    df_print: paged
 bibliography: selectivity_references.bib
 always_allow_html: yes
 ---
@@ -36,7 +33,7 @@ This stock has had persistent residual patterns in the fishery age composition d
 *The GOA Plan Team in its November 2019 minutes recommended the author examine fishery selectivity, as persistent patterns in the catch-at-age residuals may represent artifacts of the selectivity functional form used.*
 
 ![**Figure 2.** OSA residuals (leaving out age 1) for the 2022 accepted model. Persistent patterns in age 4,5 and 9 fish have been a point of concern.](Results/Figure2_admb_osa.png){#fig:figure2}
-In 2022 several ad hoc approaches were explored which demonstrated that a more flexible fisheries selectivity form could reduce the residual patterns. However, these approaches were difficult to justify and relied on arbitrarily setting likelihood penalties of time-varying selectivity curves. Instead it would be ideal to explore more flexible selectivity options based on published literature, and estimate the amount of flexibility from the data. We therefore use model 23.0 to explore alternative selectivity parameterizations. First, we review three important classes of hierarchical modeling approaches that can be used for selectivity: parametric, non-parametric, and semi-parametric functions.
+In 2022 several ad hoc approaches were explored which demonstrated that a more flexible fisheries selectivity form could reduce the residual patterns. However, these approaches were difficult to justify and relied on arbitrarily setting likelihood penalties of time-varying selectivity curves. Instead it would be ideal to explore more flexible selectivity options based on published literature, and estimate the amount of flexibility from the data. We therefore use model 23.0 to explore alternative selectivity parameterizations. First, we review three important classes of hierarchical modeling approaches that can be used for selectivity: parametric, non-parametric, and semi-parametric functions. 
 
 ### Parametric models
 
@@ -92,12 +89,12 @@ The selectivity equation details are given below.
     + $dev_{age} \sim MVN(0,\Sigma_a)$
     
 * Mod 3: Semi-parametric double logistic * AR(1) by year
-    + $Sel_{age,y}= f_1 (age)*exp⁡(dev_y)$
+    + $Sel_{age,y}= f_1 (age)*exp(dev_y)$
     + $dev_y \sim MVN(0,\Sigma _y)$
     
 * Mod 4: Semi-parametric double logistic * 2D-AR(1) by age, year
-    + $Sel_{age,y}= f_1 (age)*exp⁡(dve_{age,y}))$
-    + $dev_{age,y} \sim MVN(0,\Sigma _{age,y}) $
+    + $Sel_{age,y}= f_1 (age)*exp(dve_{age,y}))$
+    + $dev_{age,y} \sim MVN(0,\Sigma _{age,y})$
 	
 * Mod 5: Non-parametric by age
     + $Sel_{age}=f_2 (age)$
@@ -105,15 +102,15 @@ The selectivity equation details are given below.
 	
 * Mod 6: Non-parametric AR(1) by year
     + $Sel_{age,y}=1/(1+exp(-(selpar_{age}+dev_y))$
-    + $dev_y \sim MVN(0,\Sigma _y) $
+    + $dev_y \sim MVN(0,\Sigma _y)$
 	
 * Mod 7: Non-parametric 2D AR(1) age, year
     + $Sel_{age,y}=1/(1+exp(-(selpar_{age}+dev_{age,y}))$
-    + $dev_{age,y} \sim MVN(0,\Sigma _{age,y}) $
+    + $dev_{age,y} \sim MVN(0,\Sigma _{age,y})$
 	
 * Mod 8: 3D AR(1) by a, y, and cohort using conditional variance 
     + $Sel_{age,y}=1/(1+exp(-(selpar_{age}+dev_{age,y}))$
-    + $dev_{age,y} \sim MVN(0,\Sigma _{age,cohort,y}) $
+    + $dev_{age,y} \sim MVN(0,\Sigma _{age,cohort,y})$
 	
 * Mod 9: 3D AR(1) by a, y, and cohort using marginal variance
     + $Sel_{age,y}=1/(1+exp(-(selpar_{age}+dev_{age,y}))$
