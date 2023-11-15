@@ -4,16 +4,19 @@ source("~/GitHub/GOApollock/R/proj_fns.R", echo=TRUE)
 
 ## Final 2022 model
 
-abc_calc_tmb <- function(replist, datlist){
+abc_calc_tmb <- function(replist, datlist, peel = 0, proj_sel = FALSE){
   ## New automated way using the new 'spm' package. Confirmed the
   ## same as manually doing it with 'proj' below.
-  write_spm_inputs_tmb(replist, datlist, path = 'TMB/R/proj_calcs/proj')
+  write_spm_inputs_tmb(replist, datlist, path = 'TMB/R/proj_calcs/proj', peel = peel, proj_sel = proj_sel)
   prev_dir <- getwd()
   setwd('TMB/R/proj_calcs/proj')
   system("spm")
   setwd(prev_dir)
   bf <- read.csv('TMB/R/proj_calcs/proj/spm_detail.csv')
-  exec_table <- get_exec_table_tmb(replist,datlist,bf)
+  check <- bf
+  head(bf)
+  head(check)
+  exec_table <- get_exec_table_tmb(replist,datlist, bf, peel = peel)
   exec_tableF <- format_exec_table(exec_table)
 
   proj_scens <- bf %>% select(-Spp) %>%
@@ -25,13 +28,13 @@ abc_calc_tmb <- function(replist, datlist){
 }
 
 
-write_spm_inputs_tmb <- function(replist, datlist, path=getwd()){
+write_spm_inputs_tmb <- function(replist, datlist, path=getwd(), peel = 0, proj_sel = FALSE){
   ## delete old files in case it fails it'll stop there
   ff <- file.path(path, c("goa_wp.txt", "spm.dat", "spp_catch.dat"))
   trash <- lapply(ff, function(x) if(file.exists(x)) file.remove(x))
-  ayr <- datlist$endyr
-  write_spm_setup(ayr, path=path, catch=tail(datlist$cattot,1))
-  write_spm_dynamics_tmb(replist, datlist, ayr, path)
+  endyr <- datlist$endyr - peel
+  write_spm_setup(endyr, path=path, catch=tail(datlist$cattot,1 + peel)[1])
+  write_spm_dynamics_tmb(replist, datlist, endyr, path, peel = peel, proj_sel = proj_sel)
   ## old unused file, just need dummy values so it runs
   ## tacpar <- readLines(tacpar.dat'); dput(tacpar)
   write.table(file=file.path(path,'tacpar.dat'),
@@ -47,7 +50,7 @@ write_spm_inputs_tmb <- function(replist, datlist, path=getwd()){
 
 
 
-write_spm_dynamics_tmb <- function(replist, datlist, ayr, path){
+write_spm_dynamics_tmb <- function(replist, datlist, endyr, path, peel = 0, proj_sel = FALSE){
   x <- c()
   x <-
     c(x,paste("# proj input file written by write_spm_inputs on", Sys.time()))
@@ -56,7 +59,7 @@ write_spm_dynamics_tmb <- function(replist, datlist, ayr, path){
   x <- c(x, "0 # Flag to Dorn's version of a constant buffer")
   x <- c(x, "1 # number of fisheries")
   x <- c(x, "1 # number of sexes")
-  x <- c(x, paste(mean(tail(replist$F,5)), " # average F over last 5 years"))
+  x <- c(x, paste(mean(tail(replist$F,5+peel)[1:5]), " # average F over last 5 years"))
   x <- c(x, "1 # Author's F multiplier (to MaxPermissible)")
   x <- c(x, "0.4 # ABC SPR")
   x <- c(x, "0.35 # OFL SPR")
@@ -68,19 +71,19 @@ write_spm_dynamics_tmb <- function(replist, datlist, ayr, path){
   x <- c(x, "# Maturity")
   x <- c(x, paste(datlist$mat, collapse=' '))
   x <- c(x, "# Spawning WAA")
-  x <- c(x, paste(colMeans(tail(datlist$wt_srv1,5))*1000, collapse=' '))
+  x <- c(x, paste(colMeans(tail(datlist$wt_srv1,5+peel)[1:5,])*1000, collapse=' '))
   x <- c(x, "# Fishery WAA")
-  x <- c(x, paste(datlist$wt_fsh[datlist$nyrs,]*1000, collapse=' '))
+  x <- c(x, paste(datlist$wt_fsh[datlist$nyrs-peel,]*1000, collapse=' '))
   x <- c(x, "# Fishery selex, averaged over last 5 years")
-  ## This is wrong b/c ignores most recent year
-  ## x <- c(x, paste(colMeans(tail(replist$Fishery_selectivity,
-  ## 5)), collapse= ' '))
-  ##  x <- c(x, paste(replist$Mean_fishery_selectivity, collapse='
-  ##  '))
-  x <- c(x, paste(replist$slctfsh[datlist$nyrs+1,], collapse=' ')) # 2023 (nyrs+1)
+  if(proj_sel){
+    x <- c(x, paste(replist$slctfsh[datlist$nyrs+1-peel,], collapse=' ')) # nyrs+1
+  }
+  if(!proj_sel){
+    x <- c(x, paste(colMeans(tail(replist$slctfsh[1:datlist$nyrs,],5+peel)[1:4,]), collapse=' ')) # Average of 4 years prior to endyr
+  }
   x <- c(x, "# current year starting NAA")
-  x <- c(x, paste(tail(replist$N,1)*1000, collapse=' '))
-  ind <- which(datlist$yrs %in% 1978:(ayr-1))
+  x <- c(x, paste(tail(replist$N,1+peel)[1,]*1000, collapse=' '))
+  ind <- which(datlist$yrs %in% 1978:(endyr-1))
   recs <- replist$recruit[ind]*1000
   ssb <- replist$Espawnbio[ind-1]*1000
   x <- c(x, paste(length(recs), " # num of recruits"))
@@ -97,10 +100,10 @@ write_spm_dynamics_tmb <- function(replist, datlist, ayr, path){
 #' @param bigfile A data frame of full projection scenario
 #'   outputs
 #' @export
-get_exec_table_tmb <- function(replist, datlist, bigfile, maxABCratio=1){
-  ayr <- tail(datlist$yrs,1)
+get_exec_table_tmb <- function(replist, datlist, bigfile, maxABCratio=1, peel = 0){
+  endyr <- tail(datlist$yrs,1+peel)[1]
   M <- c(.3,.3)
-  means <- bigfile %>% filter(Yr > ayr & Yr <= ayr+2) %>%
+  means <- bigfile %>% filter(Yr > endyr & Yr <= endyr+2) %>%
     group_by(Alternative, Yr, Spp, SpNo) %>%
     summarize_all(mean) %>% ungroup
   sumbio <- replist[[113]][1:2]*1e6
@@ -117,7 +120,7 @@ get_exec_table_tmb <- function(replist, datlist, bigfile, maxABCratio=1){
   maxabc <- filter(means,  Alternative==1) %>% pull(Catch) %>% round(0)
   abc <- maxabc*maxABCratio
   tab <- rbind(M, sumbio, ssb, bfrac, fofl, maxfabc, fabc,ofl,maxabc,abc)
-  tab <- as.data.frame(tab) %>% setNames(c(ayr+1,ayr+2)) %>%
+  tab <- as.data.frame(tab) %>% setNames(c(endyr+1,endyr+2)) %>%
     cbind(name=row.names(tab),.)
   row.names(tab) <- NULL
   return(tab)

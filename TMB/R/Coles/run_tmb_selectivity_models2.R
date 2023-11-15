@@ -2,7 +2,7 @@
 ### from earlier work by Grant Adams.
 
 ## LIBRARIES AND DATA ----
-source("TMB/R/prepare_tmb_objects.R")
+source("TMB/R/prepare_tmb_objects_2023.R")
 source("TMB/R/Functions/phaser.R")
 source("TMB/R/Functions/create_bounds.R")
 library(tmbstan)
@@ -45,7 +45,7 @@ fit0$std <- with(fit0$SD, data.frame(par=names(value), est=value, se=sd)) %>%
   group_by(par) %>% mutate(year=1969+1:n()) %>% ungroup
 fit0$parList <- obj0$env$parList()
 fit0$modelnum <- 0
-plot_fsh_selex(fit0)
+# plot_fsh_selex(fit0)
 
 ## MODEL 1 ----
 dat$seltype <- 1
@@ -74,8 +74,10 @@ fit1$std <- with(fit1$SD, data.frame(par=names(value), est=value, se=sd)) %>%
   group_by(par) %>% mutate(year=1969+1:n()) %>% ungroup
 fit1$parList <- obj1$env$parList()
 fit1$modelnum <- 1
-plot_fsh_selex(fit1)
+# plot_fsh_selex(fit1)
 
+fit0$AIC
+fit1$AIC
 
 ## MODEL 2 ----
 ## - Semiparametric double logistic with AR1 **age** random effects

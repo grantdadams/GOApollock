@@ -280,7 +280,7 @@ input_mod8 <- list(version="mod8", path="TMB/src/",
                    modfile="goa_pk_tmb",
                    dat=dat, pars=pars_mod8, map=map_mod8, random=random)
 fit_mod8 <- fit_pk(input=input_mod8, getsd=TRUE, control=control, use_bounds = FALSE, newtonsteps=2)
-peels_mod8 <- fit_pk_retros(fit_mod8, peels = 1:6)
+peels_mod8 <- fit_pk_retros(fit_mod8, peels = 1:7)
 peels_mod8 <- c(list(fit_mod8), peels_mod8)
 
 
@@ -395,6 +395,9 @@ peels <- list(peels_mod0=peels_mod0,
               # peels_mod10=peels_mod10
               )
 saveRDS(peels, 'TMB/Output/2023_peels.RDS')
+
+# peels  <- readRDS('TMB/Output/2023_peels.RDS')
+# peels[[9]] <- peels_mod8
 
 
 # - Peels

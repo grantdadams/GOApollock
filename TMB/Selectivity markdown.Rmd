@@ -132,11 +132,18 @@ Below we fit the alternative selectivity options (Table 1) to explore model beha
 
 Second, we use marginal AIC for model selection. Model selection is not routinely used for stock assessment models because of the challenges associated with interpreting selection criteria when fitting to different types of data whose weights are often tuned and the use of penalized maximum likelihood [@Maunder2013;@Punt2014]. An added complication with the hierarchical models investigated here is that the penalty for the number of effective parameters does not include the random effects. Conditional AIC accounts for this but is not available at the moment. So, while the interpretation of differences in AIC is not as straightforward as in other statistical contexts, AIC still provides some important insight into the performance of the different models examined here.
 
-Finally, we are interested in the ability of the model to estimate selectivity in the current year and near-term projections when no age data are available to inform selectivity. In previous models a 4-year average prior to the terminal year of the assessment was used, but this ignores signals of annual and cohort trends in the data. We compare these approaches using retrospective projections of age-specific selectivity and spawning stock biomass for each model. Specifically, consecutive years of data were removed, the model was refit, selectivity was projected forward one year. Projected age-specific selectivity in year $y$ from a model fit using data until year $y-1$ was compared to estimated age-specific selectivity in year $y$ from a model fit using data until year $y$ using average relative error and mean squared error:
+Finally, we are interested in the retrospective stability and ability of the model to estimate selectivity in the current year and near-term projections when no age data are available to inform selectivity. In previous models a 4-year average prior to the terminal year of the assessment was used, but this ignores signals of annual and cohort trends in the data. We compare these approaches using retrospective projections of age-specific selectivity and spawning stock biomass for each model. Specifically, consecutive years of data were removed, the model was refit, selectivity was projected forward one year. Projected age-specific selectivity in year $y$ from a model fit using data until year $y-1$ was compared to estimated age-specific selectivity in year $y$ from a model fit using data until year $y$ using average relative error and mean squared error:
 
 $$RE_{age} = \sum_p^{N_p} \left(Sel_{{M(y-p)},age,y-p+1} - Sel_{{M(y)}, age,y-p+1}\right) / Sel_{M{(y)}, age,y-p+1} / N_p$$
 $$MSE_{age} = \sum_p^{N_p} \left(Sel_{M{(y-p)}, age,y-p+1} - Sel_{M{(y)}, age,y-p+1}\right)^2 / N_p$$
-where $RE_{age}$ and $MSE_{age}$ are the relative error and mean squared error, respectively, for projected selectivity-at-age (Table 1), $Sel_{M{(y-p)},age,y-p+1}$ is the one-year projected selectivity from a model fit using data until year $y-p$ ($M{(y-p)}$), $Sel_{M{(y)}, age,y-p+1}$ is the estimated selectivity from model fit using all available data until year $y$ ($M{(y)}$),and $N_p$ is the number of retrospective peels ($N_p = 7$). Note, that Francis weights were not updated for each retrospective peel. The above metrics were also calculated where projected selectivity $Sel_{M{(y-p)},age,y-p+1}$ was replaced with the average age-specific selectivity from the last five years, as is currently done for setting reference points. $RE_{age}$ is referred to as Mohn's Rho, and was also calculated for spawning stock biomass across peels for each model.
+where $RE_{age}$ and $MSE_{age}$ are the relative error and mean squared error, respectively, for projected selectivity-at-age (Table 1), $Sel_{M{(y-p)},age,y-p+1}$ is the one-year projected selectivity from a model fit using data until year $y-p$ ($M{(y-p)}$), $Sel_{M{(y)}, age,y-p+1}$ is the estimated selectivity from model fit using all available data until year $y$ ($M{(y)}$),and $N_p$ is the number of retrospective peels ($N_p = 7$). Note, that Francis weights were not updated for each retrospective peel. The above metrics were also calculated where projected selectivity $Sel_{M{(y-p)},age,y-p+1}$ was replaced with the average age-specific selectivity from the last five years, as is currently done for setting reference points. $RE_{age}$ is referred to as Mohn's Rho. 
+
+Mohn's Rho was calculated for spawning stock biomass and mean recruitment (1978 to last year of the assessment $-1$) across peels for each model. Additionally, Mohn's Rho and MSE was calculated for the following biological reference points (BRPs): SB0, SB40, OFL, and ABC:
+
+$$RE_{BRP} = \sum_p^{N_p} \left(BRP \left[ Sel_{M{(y-p)}}, Wt_{y-p} \right] -BRP \left[ Sel_{M{(y)}}, Wt_{y-p} \right] \right)/ BRP \left[ Sel_{M{(y)}}, Wt_{y-p} \right] / N_p$$
+$$MSE_{BRP} = \sum_p^{N_p} \left(BRP \left[ Sel_{M{(y-p)}}, Wt_{y-p} \right] -BRP \left[ Sel_{M{(y)}}, Wt_{y-p} \right] \right)^2 / N_p$$
+
+-where $RE_{BRP}$ and $MSE_{BRP}$ are the relative error and mean squared error, respectively, for each BRP calculated using the either the one-year projected selectivity from a model fit using data until year $y-p$ ($M{(y-p)}$), $Sel_{M{(y)}, age}$ or estimated selectivity from model fit using all available data until year $y$ (Note, projection year and age is removed for simplicity). Weight-at-age ($Wt_{y-p}$), recruitment, and other biological parameters used for BRP calculation were extracted prior to year $y-p$ for both models, thus representing dynamic reference points in the case of the model fit using all available data.The above metrics were also calculated where projected selectivity $Sel_{M{(y-p)}}$ was replaced with the average age-specific selectivity from the last five years, as is currently done for setting reference points.
 
 # Results
 
@@ -188,13 +195,22 @@ There are thus important differences, especially in younger ages, for the predic
 ![Estimated selectivity with uncertainty (+/- 1 SE) for the three models in the two important projection years.](Results/Figure9_selectivity_at_age_projections.png){#fig9}
 
 ## Retrospective performance
-Overall, the 3D-AR1 model had the lowest retrospective bias in spawning stock biomass ([Fig. 10](#fig10) & [Fig. 11](#fig11) & [Fig. 12](#fig12)). When evaluating retrospective bias of age-specific selectivity, using the projected selectivity generally outperforms using the average selectivity from the 4 years prior to the terminal year of the assessment for models 1, 7, and 8 (Table 3). However, age-specific retrospective bias varied across selectivity functions. For example, projected selectivity from Model 8 had lower mean squared error for ages 2-4 than projected selectivity from Model 1, but much higher mean squared error for 6+.
+Note, that the following results use the 2023 data. Overall, the 3D-AR1 model had the lowest retrospective bias in spawning stock biomass ([Fig. 10](#fig10) & [Fig. 11](#fig11) & [Fig. 12](#fig12)). The 3D-AR1 model also consistently led to the lowest AIC across peels (Table3). When evaluating retrospective bias of age-specific selectivity, using the projected selectivity generally outperforms using the average selectivity from the 4 years prior to the terminal year of the assessment for models 1, 7, and 8 (Table 4). However, age-specific retrospective bias varied across selectivity functions. For example, projected selectivity from Model 8 had lower mean squared error for ages 2-4 than projected selectivity from Model 1, but much higher mean squared error for 9+ [Fig. 13](#fig13).
 
-
+In terms of reference points, the 3D-AR1 model had the lowest retrospective bias and mean squared error for B0 and B40, but the highest retrospective bias and mean squared error for ABC and OFL (Table 4). Given that mean recruitment between 1978 and the the second to last year of the assessment is used to derive reference points. We also calculated Mohn's Rho for mean recruitment: Model 1 (ParDevs) = -0.0384, Model 7 (2D-AR1) = -0.0337, and Model 8 (3D-AR1) = -0.0287. In terms of projected vs average selectivity, projected selectivity had the lowest relative error (Mohn's Rho) across all models and the lowest mean squared error for models 7 (2D-AR1) and 8 (3D-AR1 cond). However, projected selectivity led to higher mean squared error in ABC and OFL for model 1 (ParDevs)(Table 5).
 
 ```{r, echo = FALSE, results = 'asis'}
-table3 <- read.csv("Results/Table3_Retrospective_selectivity.csv")
+table3 <- read.csv("Results/Table5_Retrospective_dAIC_main.csv")
 table3 %>%
+  select(Model, everything()) %>%
+  select(-X) %>%
+  kable(caption = "Delta AIC for retrospective model peels starting in 2023 (n = 7)", digits = 2, booktabs = T) %>%
+  kable_styling(full_width = FALSE, html_font = "Cambria", latex_options="scale_down")
+```
+
+```{r, echo = FALSE, results = 'asis'}
+table4 <- read.csv("Results/Table3_Retrospective_selectivity.csv")
+table4 %>%
   filter(Model %in% c(paste0("mod", c(1,7,8)))) %>%
   select(-X, -Age1) %>%
   kable(caption = "Retrospective metrics for age-specific selectivity", digits = 4, booktabs = T) %>%
@@ -207,13 +223,28 @@ table3 %>%
 
 ![Retrospective spawning stock biomass for model 8 (3D AR1) with n = 7 peels](Results/Figure10 Model 8 retros.png){#fig12}
 
+![Retrospective bias and mean squared error of age-specific fishery selectivity for model 1 (parDevs) and model 8 (3D AR1) with n = 7 peels](Results/Figure11 Model age-selex retros.png){#fig13}
+
+```{r, echo = FALSE, results = 'asis'}
+table5 <- read.csv("Results/Table3_Retrospective_BRPs.csv")
+table5 %>%
+  # mutate(B0 = round(as.numeric(B0),4),
+  #        B40 = round(as.numeric(B40),4),
+  #        OFL = round(as.numeric(OFL),4),
+  #        ABC = round(as.numeric(ABC),4)) %>%
+  filter(Model %in% c(paste0("mod", c(1,7,8)))) %>%
+  select(-X) %>%
+  kable(caption = "Retrospective metrics for biological reference points", digits = 5, booktabs = T) %>%
+  kable_styling(full_width = FALSE, html_font = "Cambria", latex_options="scale_down")
+```
+
 \pagebreak
 
 # Conclusions
 
-Moving from ADMB to TMB has a few minor disadvantages which are clearly outweighed by the advantage of being able to estimate hierarchical models in a statistically defensible way. Hierarchical or “state space” models are now considered “best practices” for stock assessment [@Punt2023] and TMB is the best available tool to accommodate that framework. We were able to bridge from the ADMB model 19.1a to within a very small degree of error. **As such we recommend retiring the ADMB model and proceeding with model 23 in TMB for use moving forward. ** This modeling framework will allow for important future extensions beyond fisheries selectivity as well (e.g., maturity and weight at age smoothing internally).
+Moving from ADMB to TMB has a few minor disadvantages which are clearly outweighed by the advantage of being able to estimate hierarchical models in a statistically defensible way. Hierarchical or “state space” models are now considered “best practices” for stock assessment [@Punt2023] and TMB is the best available tool to accommodate that framework. We were able to bridge from the ADMB model 19.1a to within a very small degree of error. This modeling framework will allow for important future extensions beyond fisheries selectivity as well (e.g., maturity and weight at age smoothing internally).
 
-It is also clear that fisheries selectivity varies over time and that the current approach of random walk parameter deviations (ParDev model) is insufficiently flexible for some ages, as determined by residual patterns. The semi-parametric models explored here did not perform well, for reasons that are not completely clear at the moment. But two of the non-parametric models were very promising and had improved residual patterns and retrospective performance. The 3D model had the lowest AIC and Mohn's Rho, with the 2D model about 10 units worse. We believe both non-parametric models would make for improved fits and projected selectivities for use in calculating management quantities. The major disadvantage of the non-parametric models is that they are about 10 times slower to fit than the parametric version with annual deviates (ParDevs), going from 4 to 40 minutes to optimize and do the delta method calculations. 
+It is also clear that fisheries selectivity varies over time and that the current approach of random walk parameter deviations (ParDev model) is insufficiently flexible for some ages, as determined by residual patterns. The semi-parametric models explored here did not perform well, for reasons that are not completely clear at the moment. But two of the non-parametric models were very promising and had improved residual patterns, AIC, and retrospective performance. The 3D model had the lowest AIC and Mohn's Rho, with the 2D model about 10 units worse. We believe both non-parametric models would make for improved fits and projected selectivity for use in calculating management quantities. The major disadvantage of the non-parametric models is that they are about 10 times slower to fit than the parametric version with annual deviates (ParDevs), going from 4 to 40 minutes to optimize and do the delta method calculations. The non-parametric models also lead to increased retrospective bias in ABC and OFL, due to higher flexibility in selectivity for older age classes. This is trade off with reduced retrospective bias in SSB, R0, B0, and B40.
 
 Estimating non-parametric components within an assessment takes care, as putting flexibility in the wrong component can lead to poor management advice [@Szuwalski2018; @Fisch2023]. We feel confident that selectivity does vary through time, and that the forms examined here do a good job at capturing this change. The new forms also did not lead to major changes in status, trend, or reference points among different selectivity options, but there is a remaining discrepancy when compared to 19.1a that we need to investigate and resolve. Overall, we conclude that either non-parametric option would make for an improved model, with the 3D version fitting slightly better and having a cohort effect, but being more difficult to estimate. 
 

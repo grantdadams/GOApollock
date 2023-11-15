@@ -1,4 +1,4 @@
-# proj input file written by write_proj_inputs on 2023-09-19 20:49:59.353912
+# proj input file written by write_proj_inputs on 2023-11-14 19:46:03.574144
  std # run name
  3 # tier
 7 # number of alt scenarios
@@ -11,7 +11,7 @@
 1 # flag to write bigfile
 14 # number of proj years
 1000 # number of simulations
-2022  # begin year
+2016  # begin year
 1 # number of years with specified catch
 1 # numberof species
 0 # OY min
@@ -22,4 +22,4 @@ goa_wp.txt # input file name for biology
 0.75 # new alt 4 Fabc SPRs (unused?)
 1 # num of TAC model categories
 1 # TAC model indices
-2022 129754 # Catch in each year starting w/ begining NAA
+2016 177129 # Catch in each year starting w/ begining NAA
